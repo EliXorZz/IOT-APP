@@ -40,7 +40,9 @@ android {
 }
 
 dependencies {
-    implementation("androidx.navigation:navigation-compose:2.8.4")
+    implementation(libs.vico.compose)
+
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

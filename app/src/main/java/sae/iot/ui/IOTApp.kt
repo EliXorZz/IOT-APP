@@ -1,5 +1,7 @@
 package sae.iot.ui
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -19,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
@@ -66,14 +69,32 @@ fun IOTApp(
                 startDestination = IOTScreen.Home.name,
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp)
                     .padding(innerPadding)
                     .padding(top = 20.dp)
             ) {
                 composable(route = IOTScreen.Home.name) {
                     val rooms = listOf("D360", "D360", "LOL", "D360", "DTEST", "D360", "D360")
-                    RoomSelector(rooms, selected = "LOL")
+
+                    Column {
+                        RoomSelector(
+                            rooms,
+                            selected = "LOL",
+                            modifier = Modifier.padding(bottom = 20.dp)
+                        )
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(15.dp),
+                            modifier = Modifier
+                                .verticalScroll(rememberScrollState())
+                                .padding(vertical = 20.dp)
+                        ) {
+                            LineChart()
+                            LineChart()
+                            LineChart()
+                            LineChart()
+                        }
+                    }
                 }
 
                 composable(route = IOTScreen.Actions.name) {
