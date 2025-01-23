@@ -35,7 +35,7 @@ class IotViewModel(private val sensorRepository: SensorsRepository) : ViewModel(
         viewModelScope.launch {
             sensorsUiState = SensorUiState.Loading
             sensorsUiState = try {
-                val listResult = sensorRepository.getDataSensor("d251_air_temperature")
+                val sensor: DataSensor = sensorRepository.getDataSensor("d251_air_temperature")
                 SensorUiState.Success(
                     "Success: api working"
                 )
@@ -51,8 +51,8 @@ class IotViewModel(private val sensorRepository: SensorsRepository) : ViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as IotApplication)
-                val sensorRepository = application.container.MetricsRepository
-                IotViewModel(sensorRepository = sensorRepository)
+                val sensorsRepository = application.container.SensorsRepository
+                IotViewModel(sensorRepository = sensorsRepository)
             }
         }
     }
