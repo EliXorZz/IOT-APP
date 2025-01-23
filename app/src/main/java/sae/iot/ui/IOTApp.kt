@@ -1,6 +1,5 @@
 package sae.iot.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -9,23 +8,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import sae.iot.ui.components.RoomSelector
+import sae.iot.ui.components.topbar.BottomBar
+import sae.iot.ui.components.topbar.TopBar
 
 enum class IOTScreen {
     Home,
@@ -50,15 +46,19 @@ fun IOTApp(
         NavigationItem(title = "Paramètres", icon = Icons.Outlined.Settings, IOTScreen.Settings)
     )
 
-    val gradientColors = listOf(Color(0xFFfdd9f9), Color(0xFFfffcfe), Color(0xFFd4fdf1))
-    val gradientBrush = Brush.linearGradient(colors = gradientColors)
-
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = gradientBrush)
     ) {
         Scaffold(
+            topBar = {
+                TopBar(
+                    from = "IUT Annecy",
+                    alert = "Une alerte de fous !",
+                    modifier = Modifier.padding(horizontal = 15.dp)
+                )
+            },
+
             bottomBar = { BottomBar(items, navController) },
         ) { innerPadding ->
             NavHost(
@@ -67,10 +67,13 @@ fun IOTApp(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp)
                     .padding(innerPadding)
+                    .padding(top = 20.dp)
             ) {
                 composable(route = IOTScreen.Home.name) {
-                    Text("Home")
+                    val rooms = listOf("D360", "D360", "LOL", "D360", "DTEST", "D360", "D360")
+                    RoomSelector(rooms)
                 }
 
                 composable(route = IOTScreen.Actions.name) {
@@ -81,34 +84,6 @@ fun IOTApp(
                     Text("Settings")
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun BottomBar(
-    items: Collection<NavigationItem>,
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry?.destination?.route
-
-    NavigationBar {
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        item.icon,
-                        contentDescription = item.title
-                    )
-                },
-                label = { Text(item.title) },
-                selected = currentRoute == item.screen.name,
-                onClick = {
-                    navController.navigate(item.screen.name)
-                }
-            )
         }
     }
 }
