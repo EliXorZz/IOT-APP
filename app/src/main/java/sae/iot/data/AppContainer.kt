@@ -12,7 +12,7 @@ import okhttp3.MediaType.Companion.toMediaType
  */
 interface AppContainer {
     val RoomsRepository: RoomsRepository
-    val MetricsRepository : MetricsRepository
+    val SensorsRepository : SensorsRepository
 }
 
 /**
@@ -52,7 +52,7 @@ class DefaultAppContainer : AppContainer {
     override val RoomsRepository: RoomsRepository by lazy {
         NetworkRoomsRepository(retrofitService)
     }
-    override val MetricsRepository: MetricsRepository by lazy {
-        NetworkMetricsRepository(retrofitServiceMetric)
+    override val SensorsRepository: SensorsRepository by lazy {
+        NetworkSensorsRepository(retrofitServiceMetric)
     }
 }

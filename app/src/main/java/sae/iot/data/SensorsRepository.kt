@@ -13,7 +13,7 @@ interface SensorsRepository {
     suspend fun getOccupancy(room: String): Boolean
 }
 
-class NetworkMetricsRepository(
+class NetworkSensorsRepository(
     private val SensorApiService: SensorApiService
 ) : SensorsRepository {
     override suspend fun getSensorsName(): Map<String, Sensor> = SensorApiService.getSensors()
