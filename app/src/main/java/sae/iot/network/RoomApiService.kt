@@ -6,7 +6,7 @@ import retrofit2.http.GET
 /**
  * A public interface that exposes the [getClassrooms] method
  */
-interface ClassroomApiService {
+interface RoomApiService {
     /**
      * Returns a [List] of [Classroom] and this method can be called from a Coroutine.
      * The @GET annotation indicates that the "rooms" endpoint will be requested with the GET

@@ -1,7 +1,7 @@
 package sae.iot.data
 
-import sae.iot.network.ClassroomApiService
-import sae.iot.network.MetricApiService
+import sae.iot.network.RoomApiService
+import sae.iot.network.SensorApiService
 import retrofit2.Retrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -39,11 +39,11 @@ class DefaultAppContainer : AppContainer {
     /**
      * Retrofit service object for creating api calls
      */
-    private val retrofitService: ClassroomApiService by lazy {
-        retrofit.create(ClassroomApiService::class.java)
+    private val retrofitService: RoomApiService by lazy {
+        retrofit.create(RoomApiService::class.java)
     }
-    private val retrofitServiceMetric: MetricApiService by lazy {
-        retrofit.create(MetricApiService::class.java)
+    private val retrofitServiceMetric: SensorApiService by lazy {
+        retrofit.create(SensorApiService::class.java)
     }
 
     /**

@@ -1,7 +1,7 @@
 package sae.iot.data
 
 import sae.iot.model.Classroom
-import sae.iot.network.ClassroomApiService
+import sae.iot.network.RoomApiService
 
 /**
  * Repository that fetch mars photos list from marsApi.
@@ -15,7 +15,7 @@ interface ClassroomsRepository {
  * Network Implementation of Repository that fetch mars photos list from marsApi.
  */
 class NetworkClassroomsRepository(
-    private val ClassroomApiService: ClassroomApiService
+    private val ClassroomApiService: RoomApiService
 ) : ClassroomsRepository {
     /** Fetches list of MarsPhoto from marsApi*/
     override suspend fun getClassroomsNames(): List<Classroom> = ClassroomApiService.getClassrooms()

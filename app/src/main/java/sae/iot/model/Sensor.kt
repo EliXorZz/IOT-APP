@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Metric(
+data class Sensor(
     @SerialName(value = "friendly_name_str")
     override val name: String,
     @SerialName(value = "measurement")
