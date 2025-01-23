@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun RoomSelector(
     rooms: List<String>,
+    selected: String,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -24,11 +25,13 @@ fun RoomSelector(
             horizontalArrangement = Arrangement.spacedBy(13.dp),
             verticalAlignment = Alignment.Bottom
         ) {
-            items(rooms) { item ->
+            items(rooms) { room ->
+                val isSelected = selected == room
+
                 Text(
-                    text = item,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W400
+                    text = room,
+                    fontSize = if (isSelected) 23.sp else 18.sp,
+                    fontWeight = if (isSelected) FontWeight.W700 else FontWeight.W400
                 )
             }
         }

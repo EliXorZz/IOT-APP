@@ -73,7 +73,7 @@ fun IOTApp(
             ) {
                 composable(route = IOTScreen.Home.name) {
                     val rooms = listOf("D360", "D360", "LOL", "D360", "DTEST", "D360", "D360")
-                    RoomSelector(rooms)
+                    RoomSelector(rooms, selected = "LOL")
                 }
 
                 composable(route = IOTScreen.Actions.name) {
