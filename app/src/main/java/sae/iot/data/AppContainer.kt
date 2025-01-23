@@ -11,7 +11,7 @@ import okhttp3.MediaType.Companion.toMediaType
  * Dependency Injection container at the application level.
  */
 interface AppContainer {
-    val ClassroomsRepository: ClassroomsRepository
+    val RoomsRepository: RoomsRepository
     val MetricsRepository : MetricsRepository
 }
 
@@ -49,8 +49,8 @@ class DefaultAppContainer : AppContainer {
     /**
      * DI implementation for repository
      */
-    override val ClassroomsRepository: ClassroomsRepository by lazy {
-        NetworkClassroomsRepository(retrofitService)
+    override val RoomsRepository: RoomsRepository by lazy {
+        NetworkRoomsRepository(retrofitService)
     }
     override val MetricsRepository: MetricsRepository by lazy {
         NetworkMetricsRepository(retrofitServiceMetric)

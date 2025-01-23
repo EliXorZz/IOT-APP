@@ -8,7 +8,7 @@ interface Identifiable {
 }
 
 @Serializable
-data class Classroom(
+data class Room(
     @SerialName(value = "name")
     override val name: String,
 ) : Identifiable {
