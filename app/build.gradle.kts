@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "sae.iot"
-    compileSdk = 35  // 35 n'existe pas encore, utilisez 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "sae.iot"
         minSdk = 28
-        targetSdk = 35   // Devrait être le même que compileSdk
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -44,8 +44,9 @@ android {
 }
 
 dependencies {
-    // Correction de la version de navigation-compose
-    implementation("androidx.navigation:navigation-compose:2.7.7")  // 2.8.4 n'existe pas encore
+    implementation(libs.vico.compose)
+
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
