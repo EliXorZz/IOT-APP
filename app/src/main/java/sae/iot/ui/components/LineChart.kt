@@ -1,5 +1,6 @@
 package sae.iot.ui.components
 
+import android.widget.ListPopupWindow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,13 +28,17 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 
 @Composable
 fun LineChart(
+    title: String,
+    measurement: String,
+    listX: List<Double>,
+    listY: List<Double>,
     modifier: Modifier = Modifier
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
-            columnSeries { series(4, 15, 5, 8, 10, 15, 9, 10, 7, 9, 10, 12, 2, 9, 5, 14) }
-            lineSeries { series(1, 5, 4, 7, 3, 14, 5, 9, 9, 14, 7, 13, 14, 4, 10, 12) }
+            columnSeries { series(listX) }
+            lineSeries { series(listY) }
         }
     }
 
@@ -53,7 +58,7 @@ fun LineChart(
                 modifier = Modifier
                     .padding(15.dp)
             ) {
-                Text("Température")
+                Text(title + " (${measurement})")
                 Chart(modelProducer)
             }
         }

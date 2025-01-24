@@ -3,6 +3,7 @@ package sae.iot.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -16,6 +17,10 @@ import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.viewmodels.HomeViewModel
 import sae.iot.ui.viewmodels.RoomUiState
+import sae.iot.ui.viewmodels.SensorUiState
+import androidx.compose.material3.Text
+import sae.iot.model.DataSensor
+
 
 @Composable
 fun HomeScreen(
@@ -26,6 +31,7 @@ fun HomeScreen(
 
     val roomSelected by homeViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
     val roomUiState = homeViewModel.roomUiState
+    val sensorUiState = homeViewModel.sensorsUiState
     var rooms = listOf<Room>()
     when (roomUiState) {
         is RoomUiState.Loading -> {
@@ -39,10 +45,24 @@ fun HomeScreen(
         }
     }
 
+    var sensors: Map<String, DataSensor> = emptyMap()
+    when (sensorUiState) {
+        is SensorUiState.Loading -> {
+
+        }
+        is SensorUiState.Success -> {
+            sensors = sensorUiState.sensors
+        }
+        is SensorUiState.Error -> {
+
+        }
+    }
+
     Column {
         RoomSelector(
             changeRoomState = { room ->
                 homeViewModel.changeRoom(room)
+                homeViewModel.getSensors()
             },
             roomSelected = roomSelected,
             rooms = rooms,
@@ -55,10 +75,14 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(vertical = 20.dp)
         ) {
-            LineChart()
-            LineChart()
-            LineChart()
-            LineChart()
+            sensors.forEach { (key, sensor) ->
+                LineChart(
+                    title = key,
+                    measurement = sensor.measurement,
+                    listY = sensor.y,
+                    listX = sensor.x
+                )
+            }
         }
     }
 }
