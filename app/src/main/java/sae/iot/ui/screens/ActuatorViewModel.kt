@@ -19,25 +19,16 @@ import sae.iot.data.SensorsRepository
 import sae.iot.model.Room
 import java.io.IOException
 
-sealed interface HomeRoomUiState {
-    data class Success(val rooms: List<Room>) : HomeRoomUiState
-    object Error : HomeRoomUiState
-    object Loading : HomeRoomUiState
+sealed interface ActuatorRoomUiState {
+    data class Success(val rooms: List<Room>) : ActuatorRoomUiState
+    object Error : ActuatorRoomUiState
+    object Loading : ActuatorRoomUiState
 }
 
-sealed interface SensorUiState {
-    data class Success(val sensors: Map<String, DataSensor>) : SensorUiState
-    object Error : SensorUiState
-    object Loading : SensorUiState
-}
-
-class HomeViewModel(
-    private val sensorRepository: SensorsRepository,
+class ActuatorViewModel(
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
-    var homeRoomUiState: HomeRoomUiState by mutableStateOf(HomeRoomUiState.Loading)
-        private set
-    var sensorsUiState: SensorUiState by mutableStateOf(SensorUiState.Loading)
+    var actuatorRoomUiState: ActuatorRoomUiState by mutableStateOf(ActuatorRoomUiState.Loading)
         private set
 
     init {
@@ -46,37 +37,18 @@ class HomeViewModel(
 
     fun getRooms() {
         viewModelScope.launch {
-            homeRoomUiState = HomeRoomUiState.Loading
-            homeRoomUiState = try {
+            actuatorRoomUiState = ActuatorRoomUiState.Loading
+            actuatorRoomUiState = try {
                 val rooms = roomsRepository.getRoomsNames()
-                HomeRoomUiState.Success(
+                ActuatorRoomUiState.Success(
                     rooms = rooms
                 )
             } catch (e: IOException) {
                 Log.e("IOException", e.toString(), e)
-                HomeRoomUiState.Error
+                ActuatorRoomUiState.Error
             } catch (e: HttpException) {
                 Log.e("HttpException", e.toString(), e)
-                HomeRoomUiState.Error
-            }
-        }
-    }
-
-
-    fun getSensors(room: String) {
-        viewModelScope.launch {
-            sensorsUiState = SensorUiState.Loading
-            sensorsUiState = try {
-                val sensors = sensorRepository.getDataSensorsByRoom(room)
-                SensorUiState.Success(
-                    sensors = sensors
-                )
-            } catch (e: IOException) {
-                Log.e("IOException", e.toString(), e)
-                SensorUiState.Error
-            } catch (e: HttpException) {
-                Log.e("HttpException", e.toString(), e)
-                SensorUiState.Error
+                ActuatorRoomUiState.Error
             }
         }
     }

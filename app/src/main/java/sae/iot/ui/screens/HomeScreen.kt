@@ -16,24 +16,21 @@ import sae.iot.ui.components.RoomSelector
 
 @Composable
 fun HomeScreen(
-    roomUiState: RoomUiState,
+    roomUiState: HomeRoomUiState,
     modifier: Modifier = Modifier) {
 
     var rooms = listOf<Room>()
     when (roomUiState) {
-        is RoomUiState.Loading -> {
+        is HomeRoomUiState.Loading -> {
 
         }
-        is RoomUiState.Success -> {
+        is HomeRoomUiState.Success -> {
             rooms = roomUiState.rooms
         }
-        is RoomUiState.Error -> {
+        is HomeRoomUiState.Error -> {
 
         }
     }
-
-
-
     Column {
         RoomSelector(
             rooms,

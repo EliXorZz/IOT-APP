@@ -31,18 +31,18 @@ import androidx.compose.material.icons.filled.WbSunny
 
 @Composable
 fun ActuatorScreen(
-    roomUiState: RoomUiState,
+    roomUiState: ActuatorRoomUiState,
     modifier: Modifier = Modifier
 ) {
     var rooms = listOf<Room>()
     when (roomUiState) {
-        is RoomUiState.Loading -> {
+        is ActuatorRoomUiState.Loading -> {
             Text("charge")
         }
-        is RoomUiState.Success -> {
+        is ActuatorRoomUiState.Success -> {
             rooms = roomUiState.rooms
         }
-        is RoomUiState.Error -> {
+        is ActuatorRoomUiState.Error -> {
             Text("Une erreur est survenue")
         }
     }
