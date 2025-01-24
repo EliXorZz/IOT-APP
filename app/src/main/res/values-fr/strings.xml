@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Accueil</string>
+    <string name="actuator">Actionneur</string>
+    <string name="settings">Paramètres</string>
+    <string name="alertDefault">Une alerte par défaut</string>
+    <string name="welcome">Bienvenue</string>
+</resources>
