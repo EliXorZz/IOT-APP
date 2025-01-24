@@ -8,7 +8,7 @@ data class DataSensor(
     @SerialName(value = "discomfort")
     val discomfort: Discomfort,
     @SerialName(value = "measurement")
-    val measurement: String?,
+    val measurement: String,
     @SerialName(value = "x")
     val x: List<Double>,
     @SerialName(value = "y")

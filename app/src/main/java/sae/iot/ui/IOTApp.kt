@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -48,6 +51,9 @@ fun IOTApp(
         NavigationItem(title = "Actionneurs", icon = Icons.Outlined.PlayArrow, IOTScreen.Actions),
         NavigationItem(title = "Paramètres", icon = Icons.Outlined.Settings, IOTScreen.Settings)
     )
+
+    val iotViewModel: IotViewModel =
+        viewModel(factory = IotViewModel.Factory)
 
     Surface(
         modifier = Modifier
@@ -98,7 +104,17 @@ fun IOTApp(
                 }
 
                 composable(route = IOTScreen.Actions.name) {
-                    Text("Actions")
+                    when (val sensorState = iotViewModel.sensorsUiState) {
+                        is SensorUiState.Loading -> {
+                            Text("charge")
+                        }
+                        is SensorUiState.Success -> {
+                            Text(sensorState.sensor.measurement)
+                        }
+                        is SensorUiState.Error -> {
+                            Text("Une erreur est survenue")
+                        }
+                    }
                 }
 
                 composable(route = IOTScreen.Settings.name) {
