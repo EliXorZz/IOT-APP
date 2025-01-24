@@ -1,4 +1,8 @@
 package sae.iot.ui.screens
 
-class SettingScreen {
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable
+fun SettingScreen(modifier: Modifier = Modifier) {
 }
