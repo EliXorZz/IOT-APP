@@ -23,7 +23,7 @@ sealed interface SensorUiState {
     object Loading : SensorUiState
 }
 
-class HomeViewModel(
+class SensorRoomViewModel(
     private val sensorRepository: SensorsRepository,
     private val roomsRepository: RoomsRepository
 ) : RoomViewModel(roomsRepository) {
@@ -55,7 +55,7 @@ class HomeViewModel(
                 val application = (this[APPLICATION_KEY] as IotApplication)
                 val sensorsRepository = application.container.SensorsRepository
                 val roomsRepository = application.container.RoomsRepository
-                HomeViewModel(
+                SensorRoomViewModel(
                     sensorRepository = sensorsRepository,
                     roomsRepository = roomsRepository
                 )

@@ -1,16 +1,12 @@
 package sae.iot.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -21,28 +17,29 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import sae.iot.model.DataSensor
 import sae.iot.model.Room
+import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
-import sae.iot.ui.viewmodels.HomeViewModel
+import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.RoomUiState
 import sae.iot.ui.viewmodels.SensorUiState
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import sae.iot.model.DataSensor
-
 
 @Composable
-fun HomeScreen(
-    modifier: Modifier = Modifier) {
-
-    val homeViewModel: HomeViewModel =
-        viewModel(factory = HomeViewModel.Factory)
+fun RoomScreen(
+    navController: NavHostController,
+    index: Int,
+    modifier: Modifier = Modifier
+) {
+    val homeViewModel: SensorRoomViewModel =
+        viewModel(factory = SensorRoomViewModel.Factory)
 
     val roomSelected by homeViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
     val roomUiState = homeViewModel.roomUiState
@@ -54,21 +51,29 @@ fun HomeScreen(
         is RoomUiState.Success -> {
             rooms = roomUiState.rooms
         }
+
         is RoomUiState.Error -> {}
     }
 
     var isLoading: Boolean = false
     var sensors: Map<String, DataSensor> = emptyMap()
     when (sensorUiState) {
-        is SensorUiState.Loading -> { isLoading = true }
+        is SensorUiState.Loading -> {
+            isLoading = true
+        }
+
         is SensorUiState.Success -> {
             isLoading = false
             sensors = sensorUiState.sensors
         }
-        is SensorUiState.Error -> { isLoading = true }
+
+        is SensorUiState.Error -> {
+            isLoading = true
+        }
     }
 
     Column {
+        HomeNavigation(navController, index)
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -96,8 +101,8 @@ fun HomeScreen(
                 )
             }
         }
-        if (isLoading){
-            Column (
+        if (isLoading) {
+            Column(
                 modifier = Modifier
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -109,8 +114,7 @@ fun HomeScreen(
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             }
-        }
-        else {
+        } else {
             Column(
                 verticalArrangement = Arrangement.spacedBy(15.dp),
                 modifier = Modifier

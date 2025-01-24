@@ -10,6 +10,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -22,12 +26,15 @@ import sae.iot.R
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
 import sae.iot.ui.screens.ActuatorScreen
-import sae.iot.ui.screens.HomeScreen
+import sae.iot.ui.screens.RoomScreen
+import sae.iot.ui.screens.SensorScreen
+import sae.iot.ui.screens.SettingScreen
 
 enum class IOTScreen {
-    Home,
     Actions,
-    Settings
+    Settings,
+    Room,
+    Sensor
 }
 
 data class NavigationItem(
@@ -42,14 +49,12 @@ fun IOTApp(
     navController: NavHostController = rememberNavController()
 ) {
     val items = listOf(
-        NavigationItem(title = LocalContext.current.getString(R.string.home), icon = Icons.Outlined.Home, screen = IOTScreen.Home),
+        NavigationItem(title = LocalContext.current.getString(R.string.home), icon = Icons.Outlined.Home, screen = IOTScreen.Room),
         NavigationItem(title = LocalContext.current.getString(R.string.actuator), icon = Icons.Outlined.PlayArrow, IOTScreen.Actions),
         NavigationItem(title = LocalContext.current.getString(R.string.settings), icon = Icons.Outlined.Settings, IOTScreen.Settings)
     )
 
-
-
-
+    val selectedIndex by remember { mutableIntStateOf(0) }
 
     Surface(
         modifier = Modifier
@@ -67,23 +72,25 @@ fun IOTApp(
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = IOTScreen.Home.name,
+                startDestination = IOTScreen.Room.name,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
                     .padding(innerPadding)
                     .padding(top = 20.dp)
             ) {
-                composable(route = IOTScreen.Home.name) {
-                   HomeScreen()
-                }
-
                 composable(route = IOTScreen.Actions.name) {
                     ActuatorScreen()
                 }
 
                 composable(route = IOTScreen.Settings.name) {
-                    Text("params")
+                   SettingScreen()
+                }
+                composable(route = IOTScreen.Room.name) {
+                    RoomScreen(navController, selectedIndex)
+                }
+                composable(route = IOTScreen.Sensor.name) {
+                    SensorScreen(navController, selectedIndex)
                 }
             }
         }
