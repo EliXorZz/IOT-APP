@@ -40,12 +40,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.layout.size
+import sae.iot.model.Room
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
 import sae.iot.ui.screens.HomeScreen
 import sae.iot.ui.screens.HomeViewModel
+import sae.iot.ui.screens.RoomUiState
 import sae.iot.ui.screens.SensorUiState
 
 enum class IOTScreen {
@@ -103,19 +105,20 @@ fun IOTApp(
                 }
 
                 composable(route = IOTScreen.Actions.name) {
-//                    when (val sensorState = iotViewModel.sensorsUiState) {
-//                        is SensorUiState.Loading -> {
-//                            Text("charge")
-//                        }
-//                        is SensorUiState.Success -> {
-//                            Text(sensorState.sensor.measurement)
-//                        }
-//                        is SensorUiState.Error -> {
-//                            Text("Une erreur est survenue")
-//                        }
-//                    }
-                    val rooms = listOf("D360", "D361", "LOL", "D360", "DTEST", "D360", "D360")
-                    val roomsWithLight = listOf("D361", "DTEST") // Rooms qui ont un bouton pour la lumière
+                    var rooms = listOf<Room>()
+                    when (val roomUiState = iotViewModel.roomUiState) {
+                        is RoomUiState.Loading -> {
+                            Text("charge")
+                        }
+                        is RoomUiState.Success -> {
+                            rooms = roomUiState.rooms
+                        }
+                        is RoomUiState.Error -> {
+                            Text("Une erreur est survenue")
+                        }
+                    }
+
+                    val roomsWithLight = listOf("d360", "DTEST")
 
                     Column {
                         RoomSelector(
@@ -132,7 +135,7 @@ fun IOTApp(
                         ) {
                             rooms.forEach { room ->
                                 // Afficher uniquement les salles qui ont un bouton pour la lumière
-                                if (room in roomsWithLight) {
+                                if (room.name in roomsWithLight) {
                                     Column(
                                         verticalArrangement = Arrangement.spacedBy(10.dp),
                                         modifier = Modifier
@@ -140,7 +143,7 @@ fun IOTApp(
                                             .padding(horizontal = 16.dp)
                                     ) {
                                         Text(
-                                            text = room,
+                                            text = room.name,
                                             style = MaterialTheme.typography.bodyLarge,
                                             modifier = Modifier.padding(bottom = 10.dp)
                                         )
