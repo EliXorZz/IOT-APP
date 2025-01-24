@@ -15,6 +15,8 @@ import sae.iot.data.RoomsRepository
 import sae.iot.model.Room
 import java.io.IOException
 
+val DEFAULT_ROOM = null
+
 sealed interface RoomUiState {
     data class Success(val rooms: List<Room>) : RoomUiState
     object Error : RoomUiState
@@ -25,7 +27,7 @@ abstract class RoomViewModel(
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
-    private val _roomSelectedUiState = MutableStateFlow(DEFAULT_ROOM)
+    private val _roomSelectedUiState: MutableStateFlow<String?> = MutableStateFlow(DEFAULT_ROOM)
 
     val roomSelectedUiState = _roomSelectedUiState.asStateFlow()
 
@@ -37,11 +39,14 @@ abstract class RoomViewModel(
         getRooms()
     }
 
-    fun changeRoom(room: String) {
+    fun changeRoom(room: String?) {
         _roomSelectedUiState.update {
             room
         }
+        onChangeRoom()
     }
+
+    abstract fun onChangeRoom()
 
     fun getRooms() {
         viewModelScope.launch {

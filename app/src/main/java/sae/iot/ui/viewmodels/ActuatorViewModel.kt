@@ -22,4 +22,8 @@ class ActuatorViewModel(
             }
         }
     }
+
+    override fun onChangeRoom() {
+        TODO("Not yet implemented")
+    }
 }

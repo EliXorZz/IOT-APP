@@ -17,9 +17,6 @@ import sae.iot.model.DataSensor
 import sae.iot.data.SensorsRepository
 import java.io.IOException
 
-
-val DEFAULT_ROOM = "d251"
-
 sealed interface SensorUiState {
     data class Success(val sensors: Map<String, DataSensor>) : SensorUiState
     object Error : SensorUiState
@@ -34,15 +31,11 @@ class HomeViewModel(
     var sensorsUiState: SensorUiState by mutableStateOf(SensorUiState.Loading)
         private set
 
-    init {
-        getSensors()
-    }
-
     fun getSensors() {
         viewModelScope.launch {
             sensorsUiState = SensorUiState.Loading
             sensorsUiState = try {
-                val sensors = sensorRepository.getDataSensorsByRoom(super.roomSelectedUiState.value)
+                val sensors = sensorRepository.getDataSensorsByRoom(super.roomSelectedUiState.value!!)
                 SensorUiState.Success(
                     sensors = sensors
                 )
@@ -68,5 +61,9 @@ class HomeViewModel(
                 )
             }
         }
+    }
+
+    override fun onChangeRoom() {
+        getSensors()
     }
 }

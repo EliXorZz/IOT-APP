@@ -59,7 +59,6 @@ fun IOTApp(
             topBar = {
                 TopBar(
                     from = "IUT Annecy",
-                    alert = LocalContext.current.getString(R.string.alertDefault),
                     modifier = Modifier.padding(horizontal = 15.dp)
                 )
             },
