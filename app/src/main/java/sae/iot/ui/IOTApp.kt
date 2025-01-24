@@ -44,6 +44,9 @@ import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
+import sae.iot.ui.screens.HomeScreen
+import sae.iot.ui.screens.HomeViewModel
+import sae.iot.ui.screens.SensorUiState
 
 enum class IOTScreen {
     Home,
@@ -68,8 +71,8 @@ fun IOTApp(
         NavigationItem(title = "Paramètres", icon = Icons.Outlined.Settings, IOTScreen.Settings)
     )
 
-    val iotViewModel: IotViewModel =
-        viewModel(factory = IotViewModel.Factory)
+    val iotViewModel: HomeViewModel =
+        viewModel(factory = HomeViewModel.Factory)
 
     Surface(
         modifier = Modifier
@@ -96,27 +99,7 @@ fun IOTApp(
                     .padding(top = 20.dp)
             ) {
                 composable(route = IOTScreen.Home.name) {
-                    val rooms = listOf("D360", "D360", "LOL", "D360", "DTEST", "D360", "D360")
-
-                    Column {
-                        RoomSelector(
-                            rooms,
-                            selected = "LOL",
-                            modifier = Modifier.padding(bottom = 20.dp)
-                        )
-
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(15.dp),
-                            modifier = Modifier
-                                .verticalScroll(rememberScrollState())
-                                .padding(vertical = 20.dp)
-                        ) {
-                            LineChart()
-                            LineChart()
-                            LineChart()
-                            LineChart()
-                        }
-                    }
+                   HomeScreen(roomUiState = iotViewModel.roomUiState)
                 }
 
                 composable(route = IOTScreen.Actions.name) {
@@ -204,11 +187,10 @@ fun IOTApp(
                             }
                         }
                     }
-
                 }
 
                 composable(route = IOTScreen.Settings.name) {
-                    Text("Settings")
+                    Text("params")
                 }
             }
         }
