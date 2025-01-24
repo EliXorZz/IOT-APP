@@ -68,4 +68,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
+
+    implementation("androidx.compose.material:material-icons-extended:1.4.0")
 }
