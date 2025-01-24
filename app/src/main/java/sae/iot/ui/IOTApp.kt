@@ -1,17 +1,11 @@
 package sae.iot.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,10 +18,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import sae.iot.ui.components.LineChart
-import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
+import sae.iot.ui.screens.HomeScreen
+import sae.iot.ui.screens.HomeViewModel
+import sae.iot.ui.screens.SensorUiState
 
 enum class IOTScreen {
     Home,
@@ -52,8 +47,8 @@ fun IOTApp(
         NavigationItem(title = "Paramètres", icon = Icons.Outlined.Settings, IOTScreen.Settings)
     )
 
-    val iotViewModel: IotViewModel =
-        viewModel(factory = IotViewModel.Factory)
+    val iotViewModel: HomeViewModel =
+        viewModel(factory = HomeViewModel.Factory)
 
     Surface(
         modifier = Modifier
@@ -80,45 +75,15 @@ fun IOTApp(
                     .padding(top = 20.dp)
             ) {
                 composable(route = IOTScreen.Home.name) {
-                    val rooms = listOf("D360", "D360", "LOL", "D360", "DTEST", "D360", "D360")
-
-                    Column {
-                        RoomSelector(
-                            rooms,
-                            selected = "LOL",
-                            modifier = Modifier.padding(bottom = 20.dp)
-                        )
-
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(15.dp),
-                            modifier = Modifier
-                                .verticalScroll(rememberScrollState())
-                                .padding(vertical = 20.dp)
-                        ) {
-                            LineChart()
-                            LineChart()
-                            LineChart()
-                            LineChart()
-                        }
-                    }
+                   HomeScreen(roomUiState = iotViewModel.roomUiState)
                 }
 
                 composable(route = IOTScreen.Actions.name) {
-                    when (val sensorState = iotViewModel.sensorsUiState) {
-                        is SensorUiState.Loading -> {
-                            Text("charge")
-                        }
-                        is SensorUiState.Success -> {
-                            Text(sensorState.sensor.measurement)
-                        }
-                        is SensorUiState.Error -> {
-                            Text("Une erreur est survenue")
-                        }
-                    }
+                    Text("action")
                 }
 
                 composable(route = IOTScreen.Settings.name) {
-                    Text("Settings")
+                    Text("params")
                 }
             }
         }

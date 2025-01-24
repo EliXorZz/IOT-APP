@@ -11,10 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import sae.iot.model.Room
 
 @Composable
 fun RoomSelector(
-    rooms: List<String>,
+    rooms: List<Room>,
     selected: String,
     modifier: Modifier = Modifier
 ) {
@@ -26,10 +27,10 @@ fun RoomSelector(
             verticalAlignment = Alignment.Bottom
         ) {
             items(rooms) { room ->
-                val isSelected = selected == room
+                val isSelected = selected == room.name
 
                 Text(
-                    text = room,
+                    text = room.name,
                     fontSize = if (isSelected) 23.sp else 18.sp,
                     fontWeight = if (isSelected) FontWeight.W700 else FontWeight.W400
                 )
