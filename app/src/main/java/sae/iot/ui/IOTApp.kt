@@ -55,18 +55,6 @@ fun IOTApp(
     val iotViewModel: IotViewModel =
         viewModel(factory = IotViewModel.Factory)
 
-    when (val sensorState = iotViewModel.sensorsUiState) {
-        is SensorUiState.Loading -> {
-            CircularProgressIndicator()
-        }
-        is SensorUiState.Success -> {
-            Text(sensorState.sensor.measurment)
-        }
-        is SensorUiState.Error -> {
-            Text("Une erreur est survenue")
-        }
-    }
-
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -116,7 +104,17 @@ fun IOTApp(
                 }
 
                 composable(route = IOTScreen.Actions.name) {
-                    Text("Actions")
+                    when (val sensorState = iotViewModel.sensorsUiState) {
+                        is SensorUiState.Loading -> {
+                            Text("charge")
+                        }
+                        is SensorUiState.Success -> {
+                            Text(sensorState.sensor.measurement)
+                        }
+                        is SensorUiState.Error -> {
+                            Text("Une erreur est survenue")
+                        }
+                    }
                 }
 
                 composable(route = IOTScreen.Settings.name) {

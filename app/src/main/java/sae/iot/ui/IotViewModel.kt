@@ -1,5 +1,6 @@
 package sae.iot.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,7 +19,7 @@ import sae.iot.data.SensorsRepository
 import java.io.IOException
 
 sealed interface SensorUiState {
-    data class Success(val sensor: String): SensorUiState
+    data class Success(val sensor: DataSensor): SensorUiState
     object Error: SensorUiState
     object Loading: SensorUiState
 }
@@ -37,11 +38,13 @@ class IotViewModel(private val sensorRepository: SensorsRepository) : ViewModel(
             sensorsUiState = try {
                 val sensor: DataSensor = sensorRepository.getDataSensor("d251_air_temperature")
                 SensorUiState.Success(
-                    "Success: api working"
+                    sensor = sensor
                 )
             } catch (e: IOException) {
+                Log.e("IOException", e.toString(), e)
                 SensorUiState.Error
             } catch (e: HttpException) {
+                Log.e("HttpException", e.toString(), e)
                 SensorUiState.Error
             }
         }
