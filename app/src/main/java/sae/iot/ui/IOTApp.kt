@@ -23,6 +23,7 @@ import sae.iot.R
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
 import sae.iot.ui.screens.ActuatorScreen
+import sae.iot.ui.screens.ActuatorViewModel
 import sae.iot.ui.screens.HomeScreen
 import sae.iot.ui.screens.HomeViewModel
 
@@ -49,8 +50,10 @@ fun IOTApp(
         NavigationItem(title = LocalContext.current.getString(R.string.settings), icon = Icons.Outlined.Settings, IOTScreen.Settings)
     )
 
-    val iotViewModel: HomeViewModel =
+    val homeViewModel: HomeViewModel =
         viewModel(factory = HomeViewModel.Factory)
+    val actuatorViewModel: ActuatorViewModel =
+        viewModel(factory = ActuatorViewModel.Factory)
 
     Surface(
         modifier = Modifier
@@ -77,11 +80,15 @@ fun IOTApp(
                     .padding(top = 20.dp)
             ) {
                 composable(route = IOTScreen.Home.name) {
-                   HomeScreen(roomUiState = iotViewModel.roomUiState)
+                   HomeScreen(
+                       roomSelected = homeViewModel.room,
+                       sensorUiState = homeViewModel.sensorsUiState,
+                       roomUiState = homeViewModel.homeRoomUiState
+                   )
                 }
 
                 composable(route = IOTScreen.Actions.name) {
-                    ActuatorScreen(roomUiState = iotViewModel.roomUiState)
+                    ActuatorScreen(roomUiState = actuatorViewModel.actuatorRoomUiState)
                 }
 
                 composable(route = IOTScreen.Settings.name) {

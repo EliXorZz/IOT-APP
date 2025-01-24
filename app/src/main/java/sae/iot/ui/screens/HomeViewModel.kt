@@ -19,10 +19,12 @@ import sae.iot.data.SensorsRepository
 import sae.iot.model.Room
 import java.io.IOException
 
-sealed interface RoomUiState {
-    data class Success(val rooms: List<Room>) : RoomUiState
-    object Error : RoomUiState
-    object Loading : RoomUiState
+val DEFAULT_ROOM = "d251"
+
+sealed interface HomeRoomUiState {
+    data class Success(val rooms: List<Room>) : HomeRoomUiState
+    object Error : HomeRoomUiState
+    object Loading : HomeRoomUiState
 }
 
 sealed interface SensorUiState {
@@ -35,29 +37,32 @@ class HomeViewModel(
     private val sensorRepository: SensorsRepository,
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
-    var roomUiState: RoomUiState by mutableStateOf(RoomUiState.Loading)
+    var room: String by mutableStateOf(DEFAULT_ROOM)
+
+    var homeRoomUiState: HomeRoomUiState by mutableStateOf(HomeRoomUiState.Loading)
         private set
     var sensorsUiState: SensorUiState by mutableStateOf(SensorUiState.Loading)
         private set
 
     init {
         getRooms()
+        getSensors(room)
     }
 
     fun getRooms() {
         viewModelScope.launch {
-            roomUiState = RoomUiState.Loading
-            roomUiState = try {
+            homeRoomUiState = HomeRoomUiState.Loading
+            homeRoomUiState = try {
                 val rooms = roomsRepository.getRoomsNames()
-                RoomUiState.Success(
+                HomeRoomUiState.Success(
                     rooms = rooms
                 )
             } catch (e: IOException) {
                 Log.e("IOException", e.toString(), e)
-                RoomUiState.Error
+                HomeRoomUiState.Error
             } catch (e: HttpException) {
                 Log.e("HttpException", e.toString(), e)
-                RoomUiState.Error
+                HomeRoomUiState.Error
             }
         }
     }
