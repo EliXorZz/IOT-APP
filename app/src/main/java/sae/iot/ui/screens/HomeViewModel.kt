@@ -19,6 +19,8 @@ import sae.iot.data.SensorsRepository
 import sae.iot.model.Room
 import java.io.IOException
 
+val DEFAULT_ROOM = "d251"
+
 sealed interface HomeRoomUiState {
     data class Success(val rooms: List<Room>) : HomeRoomUiState
     object Error : HomeRoomUiState
@@ -35,6 +37,8 @@ class HomeViewModel(
     private val sensorRepository: SensorsRepository,
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
+    var room: String by mutableStateOf(DEFAULT_ROOM)
+
     var homeRoomUiState: HomeRoomUiState by mutableStateOf(HomeRoomUiState.Loading)
         private set
     var sensorsUiState: SensorUiState by mutableStateOf(SensorUiState.Loading)
@@ -42,6 +46,7 @@ class HomeViewModel(
 
     init {
         getRooms()
+        getSensors(room)
     }
 
     fun getRooms() {

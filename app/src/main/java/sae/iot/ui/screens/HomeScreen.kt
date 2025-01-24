@@ -16,6 +16,8 @@ import sae.iot.ui.components.RoomSelector
 
 @Composable
 fun HomeScreen(
+    sensorUiState: SensorUiState,
+    roomSelected: String,
     roomUiState: HomeRoomUiState,
     modifier: Modifier = Modifier) {
 
@@ -34,7 +36,7 @@ fun HomeScreen(
     Column {
         RoomSelector(
             rooms,
-            selected = "LOL",
+            selected = roomSelected,
             modifier = Modifier.padding(bottom = 20.dp)
         )
 

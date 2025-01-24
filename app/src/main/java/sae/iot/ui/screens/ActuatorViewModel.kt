@@ -57,10 +57,8 @@ class ActuatorViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as IotApplication)
-                val sensorsRepository = application.container.SensorsRepository
                 val roomsRepository = application.container.RoomsRepository
-                HomeViewModel(
-                    sensorRepository = sensorsRepository,
+                ActuatorViewModel(
                     roomsRepository = roomsRepository
                 )
             }

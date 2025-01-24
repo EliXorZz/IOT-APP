@@ -78,7 +78,11 @@ fun IOTApp(
                     .padding(top = 20.dp)
             ) {
                 composable(route = IOTScreen.Home.name) {
-                   HomeScreen(roomUiState = homeViewModel.homeRoomUiState)
+                   HomeScreen(
+                       roomSelected = homeViewModel.room,
+                       sensorUiState = homeViewModel.sensorsUiState,
+                       roomUiState = homeViewModel.homeRoomUiState
+                   )
                 }
 
                 composable(route = IOTScreen.Actions.name) {
