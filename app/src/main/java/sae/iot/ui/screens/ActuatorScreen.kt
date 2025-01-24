@@ -25,24 +25,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import sae.iot.model.Room
-import sae.iot.ui.components.RoomSelector
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import sae.iot.ui.components.RoomSelector
+import sae.iot.ui.viewmodels.ActuatorViewModel
+import sae.iot.ui.viewmodels.RoomUiState
 
 @Composable
 fun ActuatorScreen(
-    roomUiState: ActuatorRoomUiState,
     modifier: Modifier = Modifier
 ) {
+    val actuatorViewModel: ActuatorViewModel =
+        viewModel(factory = ActuatorViewModel.Factory)
+
+    val actuatorRoomUiState = actuatorViewModel.roomUiState
+
+    val roomSelected by actuatorViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
+
     var rooms = listOf<Room>()
-    when (roomUiState) {
-        is ActuatorRoomUiState.Loading -> {
+    when (actuatorRoomUiState) {
+        is RoomUiState.Loading -> {
             Text("charge")
         }
-        is ActuatorRoomUiState.Success -> {
-            rooms = roomUiState.rooms
+        is RoomUiState.Success -> {
+            rooms = actuatorRoomUiState.rooms
         }
-        is ActuatorRoomUiState.Error -> {
+        is RoomUiState.Error -> {
             Text("Une erreur est survenue")
         }
     }
@@ -51,9 +62,12 @@ fun ActuatorScreen(
 
     Column {
         RoomSelector(
-            rooms,
-            selected = "LOL",
-            modifier = Modifier.padding(bottom = 20.dp)
+            changeRoomState = { room ->
+                actuatorViewModel.changeRoom(room)
+            },
+            roomSelected = roomSelected,
+            rooms = rooms,
+            modifier = Modifier.padding(bottom = 20.dp),
         )
 
         Column(

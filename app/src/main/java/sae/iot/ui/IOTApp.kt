@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,9 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
 import sae.iot.ui.screens.ActuatorScreen
-import sae.iot.ui.screens.ActuatorViewModel
 import sae.iot.ui.screens.HomeScreen
-import sae.iot.ui.screens.HomeViewModel
 
 enum class IOTScreen {
     Home,
@@ -48,10 +45,9 @@ fun IOTApp(
         NavigationItem(title = "Paramètres", icon = Icons.Outlined.Settings, IOTScreen.Settings)
     )
 
-    val homeViewModel: HomeViewModel =
-        viewModel(factory = HomeViewModel.Factory)
-    val actuatorViewModel: ActuatorViewModel =
-        viewModel(factory = ActuatorViewModel.Factory)
+
+
+
 
     Surface(
         modifier = Modifier
@@ -78,15 +74,11 @@ fun IOTApp(
                     .padding(top = 20.dp)
             ) {
                 composable(route = IOTScreen.Home.name) {
-                   HomeScreen(
-                       roomSelected = homeViewModel.room,
-                       sensorUiState = homeViewModel.sensorsUiState,
-                       roomUiState = homeViewModel.homeRoomUiState
-                   )
+                   HomeScreen()
                 }
 
                 composable(route = IOTScreen.Actions.name) {
-                    ActuatorScreen(roomUiState = actuatorViewModel.actuatorRoomUiState)
+                    ActuatorScreen()
                 }
 
                 composable(route = IOTScreen.Settings.name) {
