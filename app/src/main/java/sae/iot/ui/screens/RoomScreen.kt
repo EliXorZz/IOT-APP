@@ -28,24 +28,29 @@ import sae.iot.model.Room
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
-import sae.iot.ui.viewmodels.SensorRoomViewModel
+import sae.iot.ui.viewmodels.HomeViewModel
 import sae.iot.ui.viewmodels.RoomUiState
+import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.SensorUiState
 
 @Composable
 fun RoomScreen(
+    homeViewModel: HomeViewModel,
     navController: NavHostController,
-    index: Int,
     modifier: Modifier = Modifier
 ) {
-    val homeViewModel: SensorRoomViewModel =
+    val sensorRoomViewModel: SensorRoomViewModel =
         viewModel(factory = SensorRoomViewModel.Factory)
 
-    val roomSelected by homeViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
-    val roomUiState = homeViewModel.roomUiState
-    val sensorUiState = homeViewModel.sensorsUiState
-    var rooms = listOf<Room>()
+    val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
+    val roomSelected by sensorRoomViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
 
+    val roomUiState = sensorRoomViewModel.roomUiState
+    val sensorUiState = sensorRoomViewModel.sensorsUiState
+
+    var isLoading: Boolean = false
+
+    var rooms = listOf<Room>()
     when (roomUiState) {
         is RoomUiState.Loading -> {}
         is RoomUiState.Success -> {
@@ -55,7 +60,6 @@ fun RoomScreen(
         is RoomUiState.Error -> {}
     }
 
-    var isLoading: Boolean = false
     var sensors: Map<String, DataSensor> = emptyMap()
     when (sensorUiState) {
         is SensorUiState.Loading -> {
@@ -72,8 +76,14 @@ fun RoomScreen(
         }
     }
 
-    Column {
-        HomeNavigation(navController, index)
+    Column(modifier = modifier) {
+        HomeNavigation(
+            selectedIndex = subMenuIndex,
+            onSelectedIndex = {
+                homeViewModel.setSelectedIndex(navController, it)
+            }
+        )
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -82,54 +92,78 @@ fun RoomScreen(
         ) {
             RoomSelector(
                 changeRoomState = { room ->
-                    homeViewModel.changeRoom(room)
-                    homeViewModel.getSensors()
+                    sensorRoomViewModel.changeRoom(room)
+                    sensorRoomViewModel.getSensors()
                 },
                 roomSelected = roomSelected,
                 rooms = rooms,
                 modifier = Modifier.weight(1f)
             )
 
-            IconButton(
-                onClick = { homeViewModel.getSensors() },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Rafraîchir",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
+            RefreshButton(sensorRoomViewModel)
         }
-        if (isLoading) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.width(64.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                )
-            }
-        } else {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(15.dp),
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(vertical = 20.dp)
-            ) {
-                sensors.forEach { (key, sensor) ->
-                    LineChart(
-                        title = key,
-                        measurement = sensor.measurement ?: "N/A",
-                        listY = sensor.y ?: emptyList(),
-                        listX = sensor.x ?: emptyList()
-                    )
-                }
-            }
+
+        if (isLoading) LoadingSpin() else ChartColumn(sensors)
+    }
+}
+
+@Composable
+fun ChartColumn(
+    sensors: Map<String, DataSensor>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 20.dp)
+    ) {
+        sensors.forEach { (key, sensor) ->
+            LineChart(
+                title = key,
+
+                measurement = sensor.measurement,
+
+                listY = sensor.y,
+                listX = sensor.x
+            )
         }
+    }
+}
+
+@Composable
+fun RefreshButton(
+    homeViewModel: SensorRoomViewModel,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = { homeViewModel.getSensors() },
+        modifier = modifier.padding(start = 8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Refresh,
+            contentDescription = "Rafraîchir",
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+fun LoadingSpin(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.width(64.dp),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        )
     }
 }

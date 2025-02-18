@@ -17,8 +17,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,6 +29,7 @@ import sae.iot.model.DataSensor
 import sae.iot.model.Room
 import sae.iot.model.Sensor
 import sae.iot.ui.components.HomeNavigation
+import sae.iot.ui.viewmodels.HomeViewModel
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.components.SensorSelector
@@ -39,10 +42,13 @@ import sae.iot.ui.viewmodels.SensorsViewModel
 
 @Composable
 fun SensorScreen(
+    homeViewModel: HomeViewModel,
     navController: NavHostController,
-    index: Int,
     modifier: Modifier = Modifier
 ) {
+    val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
+
+
 
     val sensorsViewModel: SensorsViewModel =
         viewModel(factory = SensorsViewModel.Factory)
@@ -80,8 +86,13 @@ fun SensorScreen(
     }
 
 
-    Column {
-        HomeNavigation(navController, index)
+    Column(modifier = modifier) {
+        HomeNavigation(
+            selectedIndex = subMenuIndex,
+            onSelectedIndex = {
+                homeViewModel.setSelectedIndex(navController, it)
+            }
+        )
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
