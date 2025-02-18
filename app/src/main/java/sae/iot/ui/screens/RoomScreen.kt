@@ -124,9 +124,9 @@ fun RoomScreen(
                 sensors.forEach { (key, sensor) ->
                     LineChart(
                         title = key,
-                        measurement = sensor.measurement,
-                        listY = sensor.y,
-                        listX = sensor.x
+                        measurement = sensor.measurement ?: "N/A",
+                        listY = sensor.y ?: emptyList(),
+                        listX = sensor.x ?: emptyList()
                     )
                 }
             }
