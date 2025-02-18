@@ -28,12 +28,10 @@ abstract class RoomViewModel(
 ) : ViewModel() {
 
     private val _roomSelectedUiState: MutableStateFlow<String?> = MutableStateFlow(DEFAULT_ROOM)
-
     val roomSelectedUiState = _roomSelectedUiState.asStateFlow()
 
     var roomUiState: RoomUiState by mutableStateOf(RoomUiState.Loading)
         private set
-
 
     init {
         getRooms()
@@ -45,8 +43,6 @@ abstract class RoomViewModel(
         }
         onChangeRoom()
     }
-
-    abstract fun onChangeRoom()
 
     fun getRooms() {
         viewModelScope.launch {
@@ -66,4 +62,6 @@ abstract class RoomViewModel(
             }
         }
     }
+
+    abstract fun onChangeRoom()
 }

@@ -1,18 +1,18 @@
 package sae.iot.data
 
-import sae.iot.network.RoomApiService
-import sae.iot.network.SensorApiService
-import retrofit2.Retrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Retrofit
+import sae.iot.network.RoomApiService
+import sae.iot.network.SensorApiService
 
 /**
  * Dependency Injection container at the application level.
  */
 interface AppContainer {
     val RoomsRepository: RoomsRepository
-    val SensorsRepository : SensorsRepository
+    val SensorsRepository: SensorsRepository
 }
 
 /**
@@ -21,7 +21,7 @@ interface AppContainer {
  * Variables are initialized lazily and the same instance is shared across the whole app.
  */
 class DefaultAppContainer : AppContainer {
-        private val baseUrl = "http://api.tetras.dylanbattig.fr:503/"
+    private val baseUrl = "http://10.7.116.226:5001/"
 
     /**
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter
