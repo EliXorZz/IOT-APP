@@ -8,16 +8,14 @@ import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +27,7 @@ import sae.iot.ui.screens.ActuatorScreen
 import sae.iot.ui.screens.RoomScreen
 import sae.iot.ui.screens.SensorScreen
 import sae.iot.ui.screens.SettingScreen
+import sae.iot.ui.viewmodels.HomeViewModel
 
 enum class IOTScreen {
     Actions,
@@ -49,12 +48,27 @@ fun IOTApp(
     navController: NavHostController = rememberNavController()
 ) {
     val items = listOf(
-        NavigationItem(title = LocalContext.current.getString(R.string.home), icon = Icons.Outlined.Home, screen = IOTScreen.Room),
-        NavigationItem(title = LocalContext.current.getString(R.string.actuator), icon = Icons.Outlined.PlayArrow, IOTScreen.Actions),
-        NavigationItem(title = LocalContext.current.getString(R.string.settings), icon = Icons.Outlined.Settings, IOTScreen.Settings)
+        NavigationItem(
+            title = LocalContext.current.getString(R.string.home),
+            icon = Icons.Outlined.Home,
+            screen = IOTScreen.Room
+        ),
+        NavigationItem(
+            title = LocalContext.current.getString(R.string.actuator),
+            icon = Icons.Outlined.PlayArrow,
+            IOTScreen.Actions
+        ),
+        NavigationItem(
+            title = LocalContext.current.getString(R.string.settings),
+            icon = Icons.Outlined.Settings,
+            IOTScreen.Settings
+        )
     )
 
-    val selectedIndex by remember { mutableIntStateOf(0) }
+    val homeViewModel: HomeViewModel =
+        viewModel(factory = HomeViewModel.Factory)
+
+    val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
 
     Surface(
         modifier = Modifier
@@ -64,6 +78,7 @@ fun IOTApp(
             topBar = {
                 TopBar(
                     from = "IUT Annecy",
+                    alert = "Il fait trop chaud",
                     modifier = Modifier.padding(horizontal = 15.dp)
                 )
             },
@@ -77,20 +92,20 @@ fun IOTApp(
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
                     .padding(innerPadding)
-                    .padding(top = 20.dp)
+                    .padding(top = 5.dp)
             ) {
                 composable(route = IOTScreen.Actions.name) {
                     ActuatorScreen()
                 }
 
                 composable(route = IOTScreen.Settings.name) {
-                   SettingScreen()
+                    SettingScreen()
                 }
                 composable(route = IOTScreen.Room.name) {
-                    RoomScreen(navController, selectedIndex)
+                    RoomScreen(homeViewModel, navController)
                 }
                 composable(route = IOTScreen.Sensor.name) {
-                    SensorScreen(navController, selectedIndex)
+                    SensorScreen(homeViewModel, navController)
                 }
             }
         }

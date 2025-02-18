@@ -13,24 +13,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import sae.iot.model.Room
-import androidx.compose.material.icons.filled.NightsStay
-import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import sae.iot.ui.components.RoomSelector
+import sae.iot.model.Room
 import sae.iot.ui.viewmodels.ActuatorViewModel
 import sae.iot.ui.viewmodels.RoomUiState
 
@@ -50,9 +49,11 @@ fun ActuatorScreen(
         is RoomUiState.Loading -> {
             Text("charge")
         }
+
         is RoomUiState.Success -> {
             rooms = actuatorRoomUiState.rooms
         }
+
         is RoomUiState.Error -> {
             Text("Une erreur est survenue")
         }
@@ -61,15 +62,6 @@ fun ActuatorScreen(
     val roomsWithLight = listOf("d360", "DTEST")
 
     Column {
-        RoomSelector(
-            changeRoomState = { room ->
-                actuatorViewModel.changeRoom(room)
-            },
-            roomSelected = roomSelected,
-            rooms = rooms,
-            modifier = Modifier.padding(bottom = 20.dp),
-        )
-
         Column(
             verticalArrangement = Arrangement.spacedBy(15.dp),
             modifier = Modifier
@@ -98,7 +90,9 @@ fun ActuatorScreen(
                         Button(
                             onClick = { isLightOn.value = !isLightOn.value },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isLightOn.value) Color(0xFFFFFFFF) else Color(0xFF37474F),
+                                containerColor = if (isLightOn.value) Color(0xFFFFFFFF) else Color(
+                                    0xFF37474F
+                                ),
                                 contentColor = if (isLightOn.value) Color.Black else Color.White
                             ),
                             shape = buttonShape,
