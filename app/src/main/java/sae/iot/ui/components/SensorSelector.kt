@@ -33,7 +33,7 @@ import sae.iot.model.Sensor
 fun SensorSelector(
     changeSensorState: (String) -> Unit,
     sensorSelected: String?,
-    sensorList: Map<String, Sensor>,
+    sensorMap: Map<String, Sensor>,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -75,7 +75,7 @@ fun SensorSelector(
                 .fillMaxWidth(0.9f)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            sensorList.forEach { (index, sensor) ->
+            sensorMap.forEach { (key, _) ->
                 DropdownMenuItem(
                     text = {
                         Row(
@@ -83,10 +83,10 @@ fun SensorSelector(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = index,
+                                text = key,
                                 style = MaterialTheme.typography.bodyLarge
                             )
-                            if (sensor.name == sensorSelected) {
+                            if (key == sensorSelected) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = "Selected",
@@ -96,11 +96,11 @@ fun SensorSelector(
                         }
                     },
                     onClick = {
-                        changeSensorState(sensor.name)
+                        changeSensorState(key)
                         expanded = false
                     },
                     colors = MenuDefaults.itemColors(
-                        textColor = if (sensor.name == sensorSelected) {
+                        textColor = if (key == sensorSelected) {
                             MaterialTheme.colorScheme.primary
                         } else {
                             MaterialTheme.colorScheme.onSurface

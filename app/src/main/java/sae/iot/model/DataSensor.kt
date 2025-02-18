@@ -6,16 +6,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DataSensor(
     @SerialName(value = "discomfort")
-    val discomfort: Discomfort? = null,
+    val discomfort: Discomfort,
     @SerialName(value = "measurement")
-    val measurement: String? = null,
+    val measurement: String,
     @SerialName(value = "x")
-    val x: List<Double>? = null,
+    val x: List<Double>,
     @SerialName(value = "y")
-    val y: List<Double>? = null
+    val y: List<Double>
 ) {
     init {
-        require(x?.size == y?.size || x == null || y == null) {
+        require(x.size == y.size) {
             "X and Y lists must have the same size"
         }
     }

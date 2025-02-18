@@ -20,6 +20,7 @@ import sae.iot.model.DataSensor
 import sae.iot.data.SensorsRepository
 import sae.iot.model.Sensor
 import java.io.IOException
+import kotlin.math.log
 
 sealed interface AllSensorUiState {
     data class Success(val sensors: Map<String, Sensor>) : AllSensorUiState
@@ -51,7 +52,7 @@ class SensorsViewModel(
         getAllSensor()
     }
 
-    fun changeSensor(sensor: String?) {
+    fun changeSensor(sensor: String? = "d251_air_temperature") {
         _sensorSelectedUiState.update {
             sensor
         }
@@ -62,9 +63,12 @@ class SensorsViewModel(
         viewModelScope.launch {
             allSensorUiState = AllSensorUiState.Loading
             allSensorUiState = try {
-                val sensors = sensorRepository.getSensorsName()
+                val sensorNames = sensorRepository.getSensorsName()
+                sensorNames.keys.firstOrNull()?.let { firstSensor ->
+                    _sensorSelectedUiState.update { firstSensor }
+                }
                 AllSensorUiState.Success(
-                    sensors = sensors
+                    sensors = sensorNames
                 )
             } catch (e: IOException) {
                 Log.e("IOException", e.toString(), e)
@@ -77,7 +81,9 @@ class SensorsViewModel(
     }
 
     fun getDataSensor() {
+        Log.v("here1", "here1")
         viewModelScope.launch {
+            Log.v("here2", "here2")
             dataSensorUiState = DataSensorUiState.Loading
             dataSensorUiState = try {
                 val sensor = sensorRepository.getDataSensor(sensorSelectedUiState.value!!)

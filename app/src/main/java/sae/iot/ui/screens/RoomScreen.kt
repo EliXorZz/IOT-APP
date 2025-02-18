@@ -124,7 +124,6 @@ fun ChartColumn(
                 title = key,
 
                 measurement = sensor.measurement,
-
                 listY = sensor.y,
                 listX = sensor.x
             )

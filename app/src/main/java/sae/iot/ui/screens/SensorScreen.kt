@@ -49,7 +49,6 @@ fun SensorScreen(
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
 
 
-
     val sensorsViewModel: SensorsViewModel =
         viewModel(factory = SensorsViewModel.Factory)
 
@@ -57,12 +56,13 @@ fun SensorScreen(
 
     val allSensorUiState = sensorsViewModel.allSensorUiState
     val dataSensorUiState = sensorsViewModel.dataSensorUiState
-    var sensorList: Map<String, Sensor> = emptyMap()
+    var sensorMap: Map<String, Sensor> = emptyMap()
 
     when (allSensorUiState) {
         is AllSensorUiState.Loading -> {}
         is AllSensorUiState.Success -> {
-            sensorList = allSensorUiState.sensors
+            sensorMap = allSensorUiState.sensors
+
         }
 
         is AllSensorUiState.Error -> {}
@@ -85,7 +85,6 @@ fun SensorScreen(
         }
     }
 
-
     Column(modifier = modifier) {
         HomeNavigation(
             selectedIndex = subMenuIndex,
@@ -105,7 +104,7 @@ fun SensorScreen(
                     sensorsViewModel.getDataSensor()
                 },
                 sensorSelected = sensorSelected,
-                sensorList = sensorList,
+                sensorMap = sensorMap,
                 modifier = Modifier.weight(1f)
             )
             IconButton(
@@ -118,10 +117,10 @@ fun SensorScreen(
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
+
             if (isLoading) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -146,6 +145,7 @@ fun SensorScreen(
                     )
                 }
             }
+
         }
     }
 
