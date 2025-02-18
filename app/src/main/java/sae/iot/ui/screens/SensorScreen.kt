@@ -107,46 +107,68 @@ fun SensorScreen(
                 sensorMap = sensorMap,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(
-                onClick = { sensorsViewModel.getDataSensor() },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Rafraîchir",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            if (isLoading) {
-                Column(
-                    modifier = Modifier,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.width(64.dp),
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
-                }
-            } else {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(15.dp),
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(vertical = 20.dp)
-                ) {
-                    LineChart(
-                        title = sensorSelected!!,
-                        measurement = sensorShow?.measurement ?: "N/A",
-                        listY = sensorShow?.y ?: emptyList(),
-                        listX = sensorShow?.x ?: emptyList()
-                    )
-                }
-            }
-
+            RefreshButton(sensorsViewModel)
         }
+        if (isLoading) LoadingSpin() else ChartColumn(
+            title = sensorSelected!!,
+            sensor = sensorShow!!,
+            modifier = Modifier
+        )
     }
+}
 
+@Composable
+private fun ChartColumn(
+    title: String,
+    sensor: DataSensor,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 20.dp)
+    ) {
+        LineChart(
+            title = title,
+            measurement = sensor.measurement,
+            listY = sensor.y,
+            listX = sensor.x
+        )
+    }
+}
+
+@Composable
+private fun RefreshButton(
+    sensorsViewModel: SensorsViewModel,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = { sensorsViewModel.getDataSensor() },
+        modifier = modifier.padding(start = 8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Refresh,
+            contentDescription = "Rafraîchir",
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+
+@Composable
+private fun LoadingSpin(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.width(64.dp),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        )
+    }
 }

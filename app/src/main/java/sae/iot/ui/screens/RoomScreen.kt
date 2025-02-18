@@ -108,7 +108,7 @@ fun RoomScreen(
 }
 
 @Composable
-fun ChartColumn(
+private fun ChartColumn(
     sensors: Map<String, DataSensor>,
     modifier: Modifier = Modifier
 ) {
@@ -132,7 +132,7 @@ fun ChartColumn(
 }
 
 @Composable
-fun RefreshButton(
+private fun RefreshButton(
     homeViewModel: SensorRoomViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -149,7 +149,7 @@ fun RefreshButton(
 }
 
 @Composable
-fun LoadingSpin(
+private fun LoadingSpin(
     modifier: Modifier = Modifier
 ) {
     Column(

@@ -52,7 +52,7 @@ class SensorsViewModel(
         getAllSensor()
     }
 
-    fun changeSensor(sensor: String? = "d251_air_temperature") {
+    fun changeSensor(sensor: String?) {
         _sensorSelectedUiState.update {
             sensor
         }
@@ -65,7 +65,7 @@ class SensorsViewModel(
             allSensorUiState = try {
                 val sensorNames = sensorRepository.getSensorsName()
                 sensorNames.keys.firstOrNull()?.let { firstSensor ->
-                    _sensorSelectedUiState.update { firstSensor }
+                    changeSensor(firstSensor)
                 }
                 AllSensorUiState.Success(
                     sensors = sensorNames
