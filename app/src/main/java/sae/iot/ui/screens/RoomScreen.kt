@@ -1,28 +1,16 @@
 package sae.iot.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,9 +35,6 @@ import sae.iot.ui.viewmodels.RoomUiState
 import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.SensorUiState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 
 @Composable
 fun RoomScreen(
@@ -62,13 +47,13 @@ fun RoomScreen(
 
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
     val roomSelected by sensorRoomViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
-    val alertOccupied by sensorRoomViewModel.alertOccupiedUiState.collectAsStateWithLifecycle()
 
     val roomUiState = sensorRoomViewModel.roomUiState
     val occupancyUiState = sensorRoomViewModel.occupancyUiState
     val sensorUiState = sensorRoomViewModel.sensorsUiState
 
     var sensorsDataLoading: Boolean = false
+    var occupancyLoading: Boolean = false
 
     var rooms = listOf<Room>()
     when (roomUiState) {
@@ -86,7 +71,10 @@ fun RoomScreen(
         is OccupancyUiState.Success -> {
             roomOccupied = occupancyUiState.occupied
         }
-        is OccupancyUiState.Error -> {}
+
+        is OccupancyUiState.Error -> {
+            occupancyLoading = true
+        }
     }
 
     var sensors: Map<String, DataSensor> = emptyMap()
@@ -132,19 +120,7 @@ fun RoomScreen(
             RefreshButton(sensorRoomViewModel)
         }
 
-        AnimatedVisibility(
-            visible = roomOccupied && alertOccupied,
-            enter = expandVertically(
-                expandFrom = Alignment.Top
-            ) + fadeIn(),
-            exit = shrinkVertically(
-                shrinkTowards = Alignment.Top
-            ) + fadeOut()
-        ) {
-            OccupiedAlert(
-                onDismiss = { sensorRoomViewModel.setAlertClose() }
-            )
-        }
+        if (!occupancyLoading) Text(roomOccupied.toString())
 
         if (sensorsDataLoading) LoadingSpin() else ChartColumn(sensors)
     }
@@ -188,59 +164,6 @@ private fun RefreshButton(
             contentDescription = "Rafraîchir",
             tint = MaterialTheme.colorScheme.primary
         )
-    }
-}
-
-@Composable
-private fun OccupiedAlert(
-    onDismiss: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Info,
-                    contentDescription = "Information",
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-                Text(
-                    text = "Salle occupée",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier.size(24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Dismiss alert",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-        }
     }
 }
 
