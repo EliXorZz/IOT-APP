@@ -10,11 +10,42 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import sae.iot.IotApplication
+import sae.iot.R
 import sae.iot.ui.IOTScreen
 
+enum class Build {
+    TETRAS,
+    IUT;
+
+    fun realName(): String {
+        return when (this) {
+            TETRAS -> "Tetras"
+            IUT -> "IUT Annecy"
+        }
+    }
+
+    fun logo(): Int {
+        return when (this) {
+            TETRAS -> R.drawable.tetras_logo
+            IUT -> R.drawable.iut_logo
+        }
+    }
+}
+
 class HomeViewModel : ViewModel() {
+    private val _currentBuildUiState = MutableStateFlow<Build?>(null)
+    val currentBuildUiState = _currentBuildUiState.asStateFlow()
+
     private val _selectedIndexUiState = MutableStateFlow(0)
     val selectedIndexUiState = _selectedIndexUiState.asStateFlow()
+
+    fun setCurrentBuild(navigationController: NavHostController, build: Build) {
+        navigationController.navigate(IOTScreen.Room.name)
+
+        _currentBuildUiState.update {
+            build
+        }
+    }
 
     fun setSelectedIndex(navigationController: NavHostController, index: Int) {
         when (index) {
