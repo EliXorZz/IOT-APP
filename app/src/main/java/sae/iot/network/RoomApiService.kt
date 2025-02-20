@@ -4,14 +4,15 @@ import kotlinx.serialization.json.Json
 import sae.iot.model.Room
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 interface RoomApiService {
 
     @GET("api/rooms")
-    suspend fun getRooms(): List<Room>
+    suspend fun getRooms(@Query("location") location: String = "iut"): List<Room>
 
     @GET("api/room/{room}/occupancy")
-    suspend fun getOccupancy(@Path("room") room: String): Boolean
+    suspend fun getOccupancy(@Query("location") location: String = "iut", @Path("room") room: String): Boolean
 
 }

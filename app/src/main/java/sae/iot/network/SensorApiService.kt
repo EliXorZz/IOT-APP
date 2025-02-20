@@ -5,6 +5,7 @@ import sae.iot.model.Sensor
 import kotlinx.serialization.json.Json
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface SensorApiService {
     /**
@@ -13,16 +14,16 @@ interface SensorApiService {
      * HTTP method
      */
     @GET("api/sensors")
-    suspend fun getSensors(): Map<String, Sensor>
+    suspend fun getSensors(@Query("location") location: String = "iut"): Map<String, Sensor>
 
     @GET("api/room/{room}/sensor-list")
-    suspend fun getSensorsByRoom(@Path("room") room: String): List<String>
+    suspend fun getSensorsByRoom(@Query("location") location: String = "iut", @Path("room") room: String): List<String>
 
     @GET("api/sensor/{sensorId}")
-    suspend fun getData(@Path("sensorId") sensorId: String): DataSensor
+    suspend fun getData(@Query("location") location: String = "iut", @Path("sensorId") sensorId: String): DataSensor
 
     @GET("api/room/{room}/sensors")
-    suspend fun getDataSensorsByRoom(@Path("room") room: String): Map<String, DataSensor>
+    suspend fun getDataSensorsByRoom(@Query("location") location: String = "iut", @Path("room") room: String): Map<String, DataSensor>
 
 }
 
