@@ -32,12 +32,20 @@ enum class Build {
     }
 }
 
+enum class ViewType {
+    CURRENT,
+    CHART
+}
+
 class HomeViewModel : ViewModel() {
     private val _currentBuildUiState = MutableStateFlow<Build?>(null)
     val currentBuildUiState = _currentBuildUiState.asStateFlow()
 
     private val _selectedIndexUiState = MutableStateFlow(0)
     val selectedIndexUiState = _selectedIndexUiState.asStateFlow()
+
+    private val _viewTypeUiState = MutableStateFlow<ViewType>(ViewType.CURRENT)
+    val viewTypeUiState = _viewTypeUiState.asStateFlow()
 
     fun setCurrentBuild(navigationController: NavHostController, build: Build?) {
         if (build != null) {
@@ -59,6 +67,18 @@ class HomeViewModel : ViewModel() {
 
         _selectedIndexUiState.update {
             index
+        }
+    }
+
+    fun switchViewType() {
+        if (_viewTypeUiState.value == ViewType.CURRENT) {
+            _viewTypeUiState.update {
+                ViewType.CHART
+            }
+        } else if (_viewTypeUiState.value == ViewType.CHART) {
+            _viewTypeUiState.update {
+                ViewType.CURRENT
+            }
         }
     }
 

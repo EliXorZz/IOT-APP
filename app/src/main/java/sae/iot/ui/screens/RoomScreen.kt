@@ -10,11 +10,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import sae.iot.model.DataSensor
 import sae.iot.model.Room
+import sae.iot.ui.components.CurrentChart
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
@@ -34,7 +37,7 @@ import sae.iot.ui.viewmodels.OccupancyUiState
 import sae.iot.ui.viewmodels.RoomUiState
 import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.SensorUiState
-import androidx.compose.material3.Text
+import sae.iot.ui.viewmodels.ViewType
 
 @Composable
 fun RoomScreen(
@@ -47,6 +50,7 @@ fun RoomScreen(
 
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
     val roomSelected by sensorRoomViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
+    val viewType by homeViewModel.viewTypeUiState.collectAsStateWithLifecycle()
 
     val roomUiState = sensorRoomViewModel.roomUiState
     val occupancyUiState = sensorRoomViewModel.occupancyUiState
@@ -117,18 +121,27 @@ fun RoomScreen(
                 modifier = Modifier.weight(1f)
             )
 
-            RefreshButton(sensorRoomViewModel)
+            Row(
+                modifier = Modifier.padding(start = 15.dp)
+            ) {
+                SwitchViewButton(homeViewModel, viewType)
+                RefreshButton(sensorRoomViewModel)
+            }
         }
 
         if (!occupancyLoading) Text(roomOccupied.toString())
 
-        if (sensorsDataLoading) LoadingSpin() else ChartColumn(sensors)
+        if (sensorsDataLoading) LoadingSpin() else ChartColumn(
+            sensors = sensors,
+            type = viewType
+        )
     }
 }
 
 @Composable
 private fun ChartColumn(
     sensors: Map<String, DataSensor>,
+    type: ViewType,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -139,14 +152,43 @@ private fun ChartColumn(
             .padding(vertical = 20.dp)
     ) {
         sensors.forEach { (key, sensor) ->
-            LineChart(
-                title = key,
+            if (type == ViewType.CURRENT) {
+                CurrentChart(
+                    title = key,
 
-                measurement = sensor.measurement,
-                listY = sensor.y,
-                listX = sensor.x
-            )
+                    measurement = sensor.measurement,
+                    listY = sensor.y,
+                )
+            }
+
+            if (type == ViewType.CHART) {
+                LineChart(
+                    title = key,
+
+                    measurement = sensor.measurement,
+                    listY = sensor.y,
+                    listX = sensor.x
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun SwitchViewButton(
+    homeViewModel: HomeViewModel,
+    type: ViewType,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = { homeViewModel.switchViewType() },
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (type == ViewType.CURRENT) Icons.Default.BarChart else Icons.Default.Numbers,
+            contentDescription = "Switch type",
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -157,7 +199,7 @@ private fun RefreshButton(
 ) {
     IconButton(
         onClick = { homeViewModel.refresh() },
-        modifier = modifier.padding(start = 8.dp)
+        modifier = modifier
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,
