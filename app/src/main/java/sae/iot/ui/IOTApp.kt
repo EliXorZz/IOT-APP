@@ -81,7 +81,6 @@ fun IOTApp(
             topBar = {
                 if (currentBuild != null) {
                     TopBar(
-                        alert = "Il fait trop chaud",
                         build = currentBuild!!,
                         modifier = Modifier.padding(horizontal = 15.dp)
                     )

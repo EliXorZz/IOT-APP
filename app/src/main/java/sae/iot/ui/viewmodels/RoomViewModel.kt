@@ -34,8 +34,8 @@ abstract class RoomViewModel(
     private val _roomSelectedUiState: MutableStateFlow<String?> = MutableStateFlow(null)
     val roomSelectedUiState = _roomSelectedUiState.asStateFlow()
 
-    private val _roomOccupiedUiState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val roomOccupiedUiState = _roomOccupiedUiState.asStateFlow()
+    private val _alertOccupiedUiState: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val alertOccupiedUiState = _alertOccupiedUiState.asStateFlow()
 
     var roomUiState: RoomUiState by mutableStateOf(RoomUiState.Loading)
         private set
@@ -53,6 +53,12 @@ abstract class RoomViewModel(
         }
         onChangeRoom()
         getOccupancy()
+    }
+
+    fun setAlertClose(){
+        _alertOccupiedUiState.update {
+            false
+        }
     }
 
     fun getRooms() {
@@ -77,17 +83,20 @@ abstract class RoomViewModel(
     fun getOccupancy() {
         viewModelScope.launch {
             occupancyUiState = OccupancyUiState.Loading
-            occupancyUiState = try {
+            try {
                 val isOccupied = roomsRepository.getOccupancy(roomSelectedUiState.value!!)
-                OccupancyUiState.Success(
+                occupancyUiState = OccupancyUiState.Success(
                     occupied = isOccupied
                 )
+                _alertOccupiedUiState.update {
+                    isOccupied
+                }
             } catch (e: IOException) {
                 Log.e("IOException", e.toString(), e)
-                OccupancyUiState.Error
+                occupancyUiState = OccupancyUiState.Error
             } catch (e: HttpException) {
                 Log.e("HttpException", e.toString(), e)
-                OccupancyUiState.Error
+                occupancyUiState = OccupancyUiState.Error
             }
         }
     }
