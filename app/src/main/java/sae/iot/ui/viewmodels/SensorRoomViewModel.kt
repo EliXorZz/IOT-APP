@@ -25,9 +25,10 @@ sealed interface SensorUiState {
 }
 
 class SensorRoomViewModel(
+    private val location: Site,
     private val sensorRepository: SensorsRepository,
     private val roomsRepository: RoomsRepository
-) : RoomViewModel(roomsRepository) {
+) : RoomViewModel(location, roomsRepository) {
 
     var sensorsUiState: SensorUiState by mutableStateOf(SensorUiState.Loading)
         private set
@@ -36,7 +37,10 @@ class SensorRoomViewModel(
         viewModelScope.launch {
             sensorsUiState = SensorUiState.Loading
             sensorsUiState = try {
-                val sensors = sensorRepository.getDataSensorsByRoom(super.roomSelectedUiState.value!!)
+                val sensors = sensorRepository.getDataSensorsByRoom(
+                    location = location.slug(),
+                    room = super.roomSelectedUiState.value!!
+                )
                 SensorUiState.Success(
                     sensors = sensors
                 )
@@ -51,12 +55,19 @@ class SensorRoomViewModel(
     }
 
     companion object {
+        private var locationSite: Site = Site.IUT
+
+        fun initialize(location: Site) {
+            locationSite = location
+        }
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as IotApplication)
                 val sensorsRepository = application.container.SensorsRepository
                 val roomsRepository = application.container.RoomsRepository
                 SensorRoomViewModel(
+                    location = locationSite,
                     sensorRepository = sensorsRepository,
                     roomsRepository = roomsRepository
                 )

@@ -71,7 +71,7 @@ fun IOTApp(
         viewModel(factory = HomeViewModel.Factory)
 
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
-    val currentBuild by homeViewModel.currentBuildUiState.collectAsStateWithLifecycle()
+    val currentSite by homeViewModel.currentSiteUiState.collectAsStateWithLifecycle()
 
     Surface(
         modifier = Modifier
@@ -79,19 +79,19 @@ fun IOTApp(
     ) {
         Scaffold(
             topBar = {
-                if (currentBuild != null) {
+                if (currentSite != null) {
                     TopBar(
                         null,
                         homeViewModel,
                         navController,
-                        build = currentBuild!!,
+                        site = currentSite!!,
                         modifier = Modifier.padding(horizontal = 15.dp)
                     )
                 }
             },
 
             bottomBar = {
-                if (currentBuild != null) {
+                if (currentSite != null) {
                     BottomBar(items, navController)
                 }
             },

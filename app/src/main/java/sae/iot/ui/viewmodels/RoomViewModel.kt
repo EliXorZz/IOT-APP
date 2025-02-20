@@ -28,6 +28,7 @@ sealed interface OccupancyUiState {
 }
 
 abstract class RoomViewModel(
+    private val location: Site,
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
@@ -65,7 +66,7 @@ abstract class RoomViewModel(
         viewModelScope.launch {
             roomUiState = RoomUiState.Loading
             roomUiState = try {
-                val rooms = roomsRepository.getRoomsNames()
+                val rooms = roomsRepository.getRoomsNames(location.slug())
                 changeRoom(rooms[0].name)
                 RoomUiState.Success(
                     rooms = rooms
@@ -84,7 +85,10 @@ abstract class RoomViewModel(
         viewModelScope.launch {
             occupancyUiState = OccupancyUiState.Loading
             try {
-                val isOccupied = roomsRepository.getOccupancy(roomSelectedUiState.value!!)
+                val isOccupied = roomsRepository.getOccupancy(
+                    location = location.slug(),
+                    room = roomSelectedUiState.value!!
+                )
                 occupancyUiState = OccupancyUiState.Success(
                     occupied = isOccupied
                 )

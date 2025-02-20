@@ -13,7 +13,7 @@ import sae.iot.IotApplication
 import sae.iot.R
 import sae.iot.ui.IOTScreen
 
-enum class Build {
+enum class Site {
     TETRAS,
     IUT;
 
@@ -21,6 +21,13 @@ enum class Build {
         return when (this) {
             TETRAS -> "Tetras"
             IUT -> "IUT Annecy"
+        }
+    }
+
+    fun slug(): String {
+        return when (this) {
+            TETRAS -> "tetras"
+            IUT -> "iut"
         }
     }
 
@@ -33,21 +40,21 @@ enum class Build {
 }
 
 class HomeViewModel : ViewModel() {
-    private val _currentBuildUiState = MutableStateFlow<Build?>(null)
-    val currentBuildUiState = _currentBuildUiState.asStateFlow()
+    private val _currentSiteUiState = MutableStateFlow<Site?>(null)
+    val currentSiteUiState = _currentSiteUiState.asStateFlow()
 
     private val _selectedIndexUiState = MutableStateFlow(0)
     val selectedIndexUiState = _selectedIndexUiState.asStateFlow()
 
-    fun setCurrentBuild(navigationController: NavHostController, build: Build?) {
-        if (build != null) {
+    fun setCurrentSite(navigationController: NavHostController, site: Site?) {
+        if (site != null) {
             navigationController.navigate(IOTScreen.Room.name)
         } else {
             navigationController.navigate(IOTScreen.Main.name)
         }
 
-        _currentBuildUiState.update {
-            build
+        _currentSiteUiState.update {
+            site
         }
     }
 

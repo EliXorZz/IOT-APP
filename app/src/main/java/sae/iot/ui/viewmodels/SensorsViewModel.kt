@@ -35,6 +35,7 @@ sealed interface DataSensorUiState {
 }
 
 class SensorsViewModel(
+    private val location: Site,
     private val sensorRepository: SensorsRepository,
 ) : ViewModel() {
 
@@ -63,7 +64,7 @@ class SensorsViewModel(
         viewModelScope.launch {
             allSensorUiState = AllSensorUiState.Loading
             allSensorUiState = try {
-                val sensorNames = sensorRepository.getSensorsName()
+                val sensorNames = sensorRepository.getSensorsName(location.slug())
                 sensorNames.keys.firstOrNull()?.let { firstSensor ->
                     changeSensor(firstSensor)
                 }
@@ -86,7 +87,10 @@ class SensorsViewModel(
             Log.v("here2", "here2")
             dataSensorUiState = DataSensorUiState.Loading
             dataSensorUiState = try {
-                val sensor = sensorRepository.getDataSensor(sensorSelectedUiState.value!!)
+                val sensor = sensorRepository.getDataSensor(
+                    location = location.slug(),
+                    sensorId =  sensorSelectedUiState.value!!
+                )
                 DataSensorUiState.Success(
                     sensor = sensor
                 )
@@ -101,11 +105,18 @@ class SensorsViewModel(
     }
 
     companion object {
+        private var locationSite: Site = Site.IUT
+
+        fun initialize(location: Site) {
+            locationSite = location
+        }
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as IotApplication)
                 val sensorsRepository = application.container.SensorsRepository
                 SensorsViewModel(
+                    location = locationSite,
                     sensorRepository = sensorsRepository,
                 )
             }

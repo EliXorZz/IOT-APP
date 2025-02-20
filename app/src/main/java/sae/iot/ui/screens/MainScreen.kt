@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import sae.iot.ui.viewmodels.Build
+import sae.iot.ui.viewmodels.Site
 import sae.iot.ui.viewmodels.HomeViewModel
 
 @Composable
@@ -43,24 +43,24 @@ fun MainScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Image(
-                painter = painterResource(Build.TETRAS.logo()),
+                painter = painterResource(Site.TETRAS.logo()),
                 contentDescription = "logo",
 
                 modifier = Modifier
                     .size(140.dp)
                     .clickable {
-                        homeViewModel.setCurrentBuild(navController, Build.TETRAS)
+                        homeViewModel.setCurrentSite(navController, Site.TETRAS)
                     }
             )
 
             Image(
-                painter = painterResource(Build.IUT.logo()),
+                painter = painterResource(Site.IUT.logo()),
                 contentDescription = "logo",
 
                 modifier = Modifier
                     .size(100.dp)
                     .clickable {
-                        homeViewModel.setCurrentBuild(navController, Build.IUT)
+                        homeViewModel.setCurrentSite(navController, Site.IUT)
                     }
             )
         }
