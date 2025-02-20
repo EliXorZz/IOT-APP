@@ -35,11 +35,9 @@ import sae.iot.ui.viewmodels.RoomUiState
 
 @Composable
 fun ActuatorScreen(
+    actuatorViewModel: ActuatorViewModel,
     modifier: Modifier = Modifier
 ) {
-    val actuatorViewModel: ActuatorViewModel =
-        viewModel(factory = ActuatorViewModel.Factory)
-
     val actuatorRoomUiState = actuatorViewModel.roomUiState
 
     val roomSelected by actuatorViewModel.roomSelectedUiState.collectAsStateWithLifecycle()

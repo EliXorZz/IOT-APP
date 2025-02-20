@@ -9,7 +9,7 @@ import sae.iot.network.RoomApiService
 interface RoomsRepository {
     /** Fetches list of MarsPhoto from marsApi */
     suspend fun getRoomsNames(location: String): List<Room>
-    suspend fun getOccupancy(location: String, room: String): Boolean
+    suspend fun getOccupancy(room: String, location: String): Boolean
 }
 
 /**
@@ -20,5 +20,5 @@ class NetworkRoomsRepository(
 ) : RoomsRepository {
     /** Fetches list of MarsPhoto from marsApi*/
     override suspend fun getRoomsNames(location: String): List<Room> = RoomApiService.getRooms(location)
-    override suspend fun getOccupancy(location: String, room: String): Boolean = RoomApiService.getOccupancy(location, room)
+    override suspend fun getOccupancy(room: String, location: String): Boolean = RoomApiService.getOccupancy(room, location)
 }

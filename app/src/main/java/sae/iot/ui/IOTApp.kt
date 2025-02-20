@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import sae.iot.IotApplication
 import sae.iot.R
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
@@ -28,7 +30,10 @@ import sae.iot.ui.screens.MainScreen
 import sae.iot.ui.screens.RoomScreen
 import sae.iot.ui.screens.SensorScreen
 import sae.iot.ui.screens.SettingScreen
+import sae.iot.ui.viewmodels.ActuatorViewModel
 import sae.iot.ui.viewmodels.HomeViewModel
+import sae.iot.ui.viewmodels.SensorRoomViewModel
+import sae.iot.ui.viewmodels.SensorsViewModel
 
 enum class IOTScreen {
     Main,
@@ -49,6 +54,7 @@ data class NavigationItem(
 fun IOTApp(
     navController: NavHostController = rememberNavController()
 ) {
+
     val items = listOf(
         NavigationItem(
             title = LocalContext.current.getString(R.string.home),
@@ -71,7 +77,31 @@ fun IOTApp(
         viewModel(factory = HomeViewModel.Factory)
 
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
-    val currentBuild by homeViewModel.currentBuildUiState.collectAsStateWithLifecycle()
+    val currentSite by homeViewModel.currentSiteUiState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current.applicationContext as IotApplication
+    val roomsRepository = context.container.RoomsRepository
+    val sensorsRepository = context.container.SensorsRepository
+
+    val sensorsViewModel = remember {
+        SensorsViewModel(
+            homeViewModel = homeViewModel,
+            sensorRepository = sensorsRepository
+        )
+    }
+    val sensorRoomViewModel = remember {
+        SensorRoomViewModel(
+            homeViewModel = homeViewModel,
+            sensorRepository = sensorsRepository,
+            roomsRepository = roomsRepository
+        )
+    }
+    val actuatorViewModel = remember {
+        ActuatorViewModel(
+            homeViewModel = homeViewModel,
+            roomsRepository = roomsRepository
+        )
+    }
 
     Surface(
         modifier = Modifier
@@ -79,19 +109,19 @@ fun IOTApp(
     ) {
         Scaffold(
             topBar = {
-                if (currentBuild != null) {
+                if (currentSite != null) {
                     TopBar(
                         null,
                         homeViewModel,
                         navController,
-                        build = currentBuild!!,
+                        site = currentSite!!,
                         modifier = Modifier.padding(horizontal = 15.dp)
                     )
                 }
             },
 
             bottomBar = {
-                if (currentBuild != null) {
+                if (currentSite != null) {
                     BottomBar(items, navController)
                 }
             },
@@ -110,17 +140,19 @@ fun IOTApp(
                 }
 
                 composable(route = IOTScreen.Actions.name) {
-                    ActuatorScreen()
+                    ActuatorScreen(actuatorViewModel)
                 }
 
                 composable(route = IOTScreen.Settings.name) {
                     SettingScreen()
                 }
                 composable(route = IOTScreen.Room.name) {
-                    RoomScreen(homeViewModel, navController)
+                    sensorRoomViewModel.fresh()
+                    RoomScreen(homeViewModel, navController, sensorRoomViewModel)
                 }
                 composable(route = IOTScreen.Sensor.name) {
-                    SensorScreen(homeViewModel, navController)
+                    sensorsViewModel.fresh()
+                    SensorScreen(homeViewModel, navController, sensorsViewModel)
                 }
             }
         }

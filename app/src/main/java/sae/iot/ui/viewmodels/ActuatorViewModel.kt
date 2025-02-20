@@ -8,22 +8,10 @@ import sae.iot.IotApplication
 import sae.iot.data.RoomsRepository
 
 class ActuatorViewModel(
+    private val homeViewModel: HomeViewModel,
     private val roomsRepository: RoomsRepository
-) : RoomViewModel(roomsRepository) {
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as IotApplication)
-                val roomsRepository = application.container.RoomsRepository
-                ActuatorViewModel(
-                    roomsRepository = roomsRepository
-                )
-            }
-        }
-    }
+) : RoomViewModel(homeViewModel, roomsRepository) {
 
     override fun onChangeRoom() {
-
     }
 }

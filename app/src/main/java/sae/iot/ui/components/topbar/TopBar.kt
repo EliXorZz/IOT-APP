@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import sae.iot.R
-import sae.iot.ui.viewmodels.Build
+import sae.iot.ui.viewmodels.Site
 import sae.iot.ui.viewmodels.HomeViewModel
 
 @Composable
@@ -32,7 +32,7 @@ fun TopBar(
     alert: String? = null,
     homeViewModel: HomeViewModel,
     navigationController: NavHostController,
-    build: Build,
+    site: Site,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -50,13 +50,13 @@ fun TopBar(
                 contentDescription = "back",
 
                 modifier = Modifier.clickable {
-                    homeViewModel.setCurrentBuild(navigationController, null)
+                    homeViewModel.setCurrentSite(navigationController, null)
                 }
             )
 
             Row {
                 Image(
-                    painter = painterResource(build.logo()),
+                    painter = painterResource(site.logo()),
                     contentDescription = "logo",
 
                     modifier = Modifier.size(55.dp)
@@ -68,7 +68,7 @@ fun TopBar(
                 ) {
                     Text(LocalContext.current.getString(R.string.welcome))
                     Text(
-                        text = build.realName(),
+                        text = site.realName(),
                         fontSize = 19.sp,
                         fontWeight = FontWeight.W700
                     )

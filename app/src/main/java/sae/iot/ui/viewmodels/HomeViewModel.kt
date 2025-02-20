@@ -38,8 +38,9 @@ enum class ViewType {
 }
 
 class HomeViewModel : ViewModel() {
-    private val _currentBuildUiState = MutableStateFlow<Build?>(null)
-    val currentBuildUiState = _currentBuildUiState.asStateFlow()
+    private val _currentSiteUiState = MutableStateFlow<Site?>(null)
+    val currentSiteUiState: StateFlow<Site?> = _currentSiteUiState.asStateFlow()
+
 
     private val _selectedIndexUiState = MutableStateFlow(0)
     val selectedIndexUiState = _selectedIndexUiState.asStateFlow()
@@ -47,16 +48,16 @@ class HomeViewModel : ViewModel() {
     private val _viewTypeUiState = MutableStateFlow<ViewType>(ViewType.CURRENT)
     val viewTypeUiState = _viewTypeUiState.asStateFlow()
 
-    fun setCurrentBuild(navigationController: NavHostController, build: Build?) {
-        if (build != null) {
+
+    fun setCurrentSite(navigationController: NavHostController, site: Site?) {
+        if (site != null) {
+
             navigationController.navigate(IOTScreen.Room.name)
         } else {
             navigationController.navigate(IOTScreen.Main.name)
         }
 
-        _currentBuildUiState.update {
-            build
-        }
+        _currentSiteUiState.value = site
     }
 
     fun setSelectedIndex(navigationController: NavHostController, index: Int) {

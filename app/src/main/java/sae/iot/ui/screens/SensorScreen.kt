@@ -18,8 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Warning
@@ -29,29 +27,27 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import sae.iot.model.DataSensor
 import sae.iot.model.Sensor
-import sae.iot.ui.components.CurrentChart
 import sae.iot.ui.components.HomeNavigation
+import sae.iot.ui.viewmodels.HomeViewModel
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.SensorSelector
 import sae.iot.ui.viewmodels.AllSensorUiState
 import sae.iot.ui.viewmodels.DataSensorUiState
-import sae.iot.ui.viewmodels.HomeViewModel
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import sae.iot.ui.viewmodels.SensorsViewModel
-import sae.iot.ui.viewmodels.ViewType
 
 
 @Composable
@@ -62,9 +58,6 @@ fun SensorScreen(
 ) {
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
     val viewType by homeViewModel.viewTypeUiState.collectAsStateWithLifecycle()
-
-    val sensorsViewModel: SensorsViewModel =
-        viewModel(factory = SensorsViewModel.Factory)
 
     val sensorSelected by sensorsViewModel.sensorSelectedUiState.collectAsStateWithLifecycle()
 
@@ -121,18 +114,11 @@ fun SensorScreen(
                 sensorMap = sensorMap,
                 modifier = Modifier.weight(1f)
             )
-
-            Row(
-                modifier = Modifier.padding(start = 15.dp)
-            ) {
-                SwitchViewButton(homeViewModel, viewType)
-                RefreshButton(sensorsViewModel)
-            }
+            RefreshButton(sensorsViewModel)
         }
         if (isLoading) LoadingSpin() else ChartColumn(
             title = sensorSelected!!,
             sensor = sensorShow!!,
-            type = viewType,
             modifier = Modifier
         )
     }
@@ -143,8 +129,6 @@ fun SensorScreen(
 private fun ChartColumn(
     title: String,
     sensor: DataSensor,
-    type: ViewType,
-
     modifier: Modifier = Modifier
 ) {
     var alertOpen by remember { mutableStateOf(true) }
@@ -170,24 +154,12 @@ private fun ChartColumn(
             )
         }
 
-        if (type == ViewType.CURRENT) {
-            CurrentChart(
-                title = title,
-
-                measurement = sensor.measurement,
-                listY = sensor.y,
-            )
-        }
-
-        if (type == ViewType.CHART) {
-            LineChart(
-                title = title,
-
-                measurement = sensor.measurement,
-                listY = sensor.y,
-                listX = sensor.x
-            )
-        }
+        LineChart(
+            title = title,
+            measurement = sensor.measurement,
+            listY = sensor.y,
+            listX = sensor.x
+        )
     }
 }
 
@@ -246,31 +218,13 @@ private fun DiscomfortAlert(
 }
 
 @Composable
-private fun SwitchViewButton(
-    homeViewModel: HomeViewModel,
-    type: ViewType,
-    modifier: Modifier = Modifier
-) {
-    IconButton(
-        onClick = { homeViewModel.switchViewType() },
-        modifier = modifier
-    ) {
-        Icon(
-            imageVector = if (type == ViewType.CURRENT) Icons.Default.BarChart else Icons.Default.Numbers,
-            contentDescription = "Switch type",
-            tint = MaterialTheme.colorScheme.primary
-        )
-    }
-}
-
-@Composable
 private fun RefreshButton(
     sensorsViewModel: SensorsViewModel,
     modifier: Modifier = Modifier
 ) {
     IconButton(
         onClick = { sensorsViewModel.getDataSensor() },
-        modifier = modifier
+        modifier = modifier.padding(start = 8.dp)
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,
