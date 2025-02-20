@@ -25,20 +25,23 @@ sealed interface SensorUiState {
 }
 
 class SensorRoomViewModel(
-    private val location: Site,
+    private val homeViewModel: HomeViewModel,
     private val sensorRepository: SensorsRepository,
     private val roomsRepository: RoomsRepository
-) : RoomViewModel(location, roomsRepository) {
+) : RoomViewModel(homeViewModel, roomsRepository) {
 
     var sensorsUiState: SensorUiState by mutableStateOf(SensorUiState.Loading)
         private set
+
+    private val currentSite = homeViewModel.currentSiteUiState
 
     fun getSensors() {
         viewModelScope.launch {
             sensorsUiState = SensorUiState.Loading
             sensorsUiState = try {
+                val site = homeViewModel.currentSiteUiState.value
                 val sensors = sensorRepository.getDataSensorsByRoom(
-                    location = location.slug(),
+                    location = site!!.slug(),
                     room = super.roomSelectedUiState.value!!
                 )
                 SensorUiState.Success(
@@ -54,30 +57,13 @@ class SensorRoomViewModel(
         }
     }
 
-    companion object {
-        private var locationSite: Site = Site.IUT
-
-        fun initialize(location: Site) {
-            locationSite = location
-        }
-
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as IotApplication)
-                val sensorsRepository = application.container.SensorsRepository
-                val roomsRepository = application.container.RoomsRepository
-                SensorRoomViewModel(
-                    location = locationSite,
-                    sensorRepository = sensorsRepository,
-                    roomsRepository = roomsRepository
-                )
-            }
-        }
-    }
-
     fun refresh() {
         getSensors()
         getOccupancy()
+    }
+
+    fun restarti() {
+        getRooms()
     }
 
     override fun onChangeRoom() {

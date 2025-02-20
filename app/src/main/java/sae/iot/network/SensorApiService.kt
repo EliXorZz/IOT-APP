@@ -17,13 +17,13 @@ interface SensorApiService {
     suspend fun getSensors(@Query("location") location: String = "iut"): Map<String, Sensor>
 
     @GET("api/room/{room}/sensor-list")
-    suspend fun getSensorsByRoom(@Query("location") location: String = "iut", @Path("room") room: String): List<String>
+    suspend fun getSensorsByRoom(@Path("room") room: String, @Query("location") location: String = "iut"): List<String>
 
     @GET("api/sensor/{sensorId}")
-    suspend fun getData(@Query("location") location: String = "iut", @Path("sensorId") sensorId: String): DataSensor
+    suspend fun getData(@Path("sensorId") sensorId: String, @Query("location") location: String = "iut"): DataSensor
 
     @GET("api/room/{room}/sensors")
-    suspend fun getDataSensorsByRoom(@Query("location") location: String = "iut", @Path("room") room: String): Map<String, DataSensor>
+    suspend fun getDataSensorsByRoom(@Path("room") room: String, @Query("location") location: String = "iut"): Map<String, DataSensor>
 
 }
 

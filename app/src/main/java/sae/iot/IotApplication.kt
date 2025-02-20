@@ -1,6 +1,7 @@
 package sae.iot
 
 import android.app.Application
+import android.util.Log
 import sae.iot.data.AppContainer
 import sae.iot.data.DefaultAppContainer
 

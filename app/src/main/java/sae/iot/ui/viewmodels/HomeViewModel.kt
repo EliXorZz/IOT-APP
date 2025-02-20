@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import sae.iot.IotApplication
@@ -41,7 +42,8 @@ enum class Site {
 
 class HomeViewModel : ViewModel() {
     private val _currentSiteUiState = MutableStateFlow<Site?>(null)
-    val currentSiteUiState = _currentSiteUiState.asStateFlow()
+    val currentSiteUiState: StateFlow<Site?> = _currentSiteUiState.asStateFlow()
+
 
     private val _selectedIndexUiState = MutableStateFlow(0)
     val selectedIndexUiState = _selectedIndexUiState.asStateFlow()
@@ -53,9 +55,8 @@ class HomeViewModel : ViewModel() {
             navigationController.navigate(IOTScreen.Main.name)
         }
 
-        _currentSiteUiState.update {
-            site
-        }
+        _currentSiteUiState.value = site
+
     }
 
     fun setSelectedIndex(navigationController: NavHostController, index: Int) {

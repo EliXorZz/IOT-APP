@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +29,7 @@ sealed interface OccupancyUiState {
 }
 
 abstract class RoomViewModel(
-    private val location: Site,
+    private val homeViewModel: HomeViewModel,
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
@@ -43,10 +44,6 @@ abstract class RoomViewModel(
 
     var occupancyUiState: OccupancyUiState by mutableStateOf(OccupancyUiState.Loading)
         private set
-
-    init {
-        getRooms()
-    }
 
     fun changeRoom(room: String?) {
         _roomSelectedUiState.update {
@@ -66,7 +63,8 @@ abstract class RoomViewModel(
         viewModelScope.launch {
             roomUiState = RoomUiState.Loading
             roomUiState = try {
-                val rooms = roomsRepository.getRoomsNames(location.slug())
+                val site = homeViewModel.currentSiteUiState.value
+                val rooms = roomsRepository.getRoomsNames(site!!.slug())
                 changeRoom(rooms[0].name)
                 RoomUiState.Success(
                     rooms = rooms
@@ -80,13 +78,13 @@ abstract class RoomViewModel(
             }
         }
     }
-
     fun getOccupancy() {
         viewModelScope.launch {
             occupancyUiState = OccupancyUiState.Loading
             try {
+                val site = homeViewModel.currentSiteUiState.value
                 val isOccupied = roomsRepository.getOccupancy(
-                    location = location.slug(),
+                    location = site!!.slug(),
                     room = roomSelectedUiState.value!!
                 )
                 occupancyUiState = OccupancyUiState.Success(

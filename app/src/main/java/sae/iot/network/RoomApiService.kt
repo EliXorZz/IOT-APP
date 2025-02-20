@@ -13,6 +13,6 @@ interface RoomApiService {
     suspend fun getRooms(@Query("location") location: String = "iut"): List<Room>
 
     @GET("api/room/{room}/occupancy")
-    suspend fun getOccupancy(@Query("location") location: String = "iut", @Path("room") room: String): Boolean
+    suspend fun getOccupancy(@Path("room") room: String, @Query("location") location: String = "iut"): Boolean
 
 }

@@ -20,7 +20,6 @@ import sae.iot.model.DataSensor
 import sae.iot.data.SensorsRepository
 import sae.iot.model.Sensor
 import java.io.IOException
-import kotlin.math.log
 
 sealed interface AllSensorUiState {
     data class Success(val sensors: Map<String, Sensor>) : AllSensorUiState
@@ -35,7 +34,7 @@ sealed interface DataSensorUiState {
 }
 
 class SensorsViewModel(
-    private val location: Site,
+    private val homeViewModel: HomeViewModel,
     private val sensorRepository: SensorsRepository,
 ) : ViewModel() {
 
@@ -49,7 +48,7 @@ class SensorsViewModel(
     var dataSensorUiState: DataSensorUiState by mutableStateOf(DataSensorUiState.Loading)
         private set
 
-    init {
+    fun restarti() {
         getAllSensor()
     }
 
@@ -64,7 +63,8 @@ class SensorsViewModel(
         viewModelScope.launch {
             allSensorUiState = AllSensorUiState.Loading
             allSensorUiState = try {
-                val sensorNames = sensorRepository.getSensorsName(location.slug())
+                val site = homeViewModel.currentSiteUiState.value
+                val sensorNames = sensorRepository.getSensorsName(site!!.slug())
                 sensorNames.keys.firstOrNull()?.let { firstSensor ->
                     changeSensor(firstSensor)
                 }
@@ -87,8 +87,9 @@ class SensorsViewModel(
             Log.v("here2", "here2")
             dataSensorUiState = DataSensorUiState.Loading
             dataSensorUiState = try {
+                val site = homeViewModel.currentSiteUiState.value
                 val sensor = sensorRepository.getDataSensor(
-                    location = location.slug(),
+                    location = site!!.slug(),
                     sensorId =  sensorSelectedUiState.value!!
                 )
                 DataSensorUiState.Success(
@@ -100,25 +101,6 @@ class SensorsViewModel(
             } catch (e: HttpException) {
                 Log.e("HttpException", e.toString(), e)
                 DataSensorUiState.Error
-            }
-        }
-    }
-
-    companion object {
-        private var locationSite: Site = Site.IUT
-
-        fun initialize(location: Site) {
-            locationSite = location
-        }
-
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as IotApplication)
-                val sensorsRepository = application.container.SensorsRepository
-                SensorsViewModel(
-                    location = locationSite,
-                    sensorRepository = sensorsRepository,
-                )
             }
         }
     }

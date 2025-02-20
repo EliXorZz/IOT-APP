@@ -25,11 +25,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun IOTPreview() {
-    IOTTheme {
-        IOTApp()
-    }
-}

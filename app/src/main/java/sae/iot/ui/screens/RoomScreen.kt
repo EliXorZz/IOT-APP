@@ -55,11 +55,9 @@ import androidx.compose.runtime.setValue
 fun RoomScreen(
     homeViewModel: HomeViewModel,
     navController: NavHostController,
+    sensorRoomViewModel: SensorRoomViewModel,
     modifier: Modifier = Modifier
 ) {
-    val sensorRoomViewModel: SensorRoomViewModel =
-        viewModel(factory = SensorRoomViewModel.Factory)
-
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
     val roomSelected by sensorRoomViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
     val alertOccupied by sensorRoomViewModel.alertOccupiedUiState.collectAsStateWithLifecycle()

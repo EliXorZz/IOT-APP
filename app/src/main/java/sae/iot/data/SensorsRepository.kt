@@ -7,16 +7,16 @@ import sae.iot.network.SensorApiService
 
 interface SensorsRepository {
     suspend fun getSensorsName(location: String): Map<String, Sensor>
-    suspend fun getSensorsByRoom(location: String, room: String): List<String>
-    suspend fun getDataSensorsByRoom(location: String, room: String): Map<String, DataSensor>
-    suspend fun getDataSensor(location: String, sensorId: String): DataSensor
+    suspend fun getSensorsByRoom(room: String, location: String): List<String>
+    suspend fun getDataSensorsByRoom(room: String, location: String): Map<String, DataSensor>
+    suspend fun getDataSensor(sensorId: String, location: String): DataSensor
 }
 
 class NetworkSensorsRepository(
     private val SensorApiService: SensorApiService
 ) : SensorsRepository {
     override suspend fun getSensorsName(location: String): Map<String, Sensor> = SensorApiService.getSensors(location)
-    override suspend fun getSensorsByRoom(location: String, room: String): List<String> = SensorApiService.getSensorsByRoom(location, room)
-    override suspend fun getDataSensorsByRoom(location: String, room: String): Map<String, DataSensor> = SensorApiService.getDataSensorsByRoom(location,room)
-    override suspend fun getDataSensor(location: String, sensorId: String): DataSensor = SensorApiService.getData(location, sensorId)
+    override suspend fun getSensorsByRoom(room: String, location: String): List<String> = SensorApiService.getSensorsByRoom(room, location)
+    override suspend fun getDataSensorsByRoom(room: String, location: String): Map<String, DataSensor> = SensorApiService.getDataSensorsByRoom(room,location)
+    override suspend fun getDataSensor(sensorId: String, location: String): DataSensor = SensorApiService.getData(sensorId, location)
 }
