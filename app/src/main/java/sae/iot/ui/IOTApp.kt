@@ -147,11 +147,11 @@ fun IOTApp(
                     SettingScreen()
                 }
                 composable(route = IOTScreen.Room.name) {
-                    sensorRoomViewModel.restarti()
+                    sensorRoomViewModel.fresh()
                     RoomScreen(homeViewModel, navController, sensorRoomViewModel)
                 }
                 composable(route = IOTScreen.Sensor.name) {
-                    sensorsViewModel.restarti()
+                    sensorsViewModel.fresh()
                     SensorScreen(homeViewModel, navController, sensorsViewModel)
                 }
             }

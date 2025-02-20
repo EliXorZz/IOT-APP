@@ -62,8 +62,10 @@ class SensorRoomViewModel(
         getOccupancy()
     }
 
-    fun restarti() {
-        getRooms()
+    fun fresh() {
+        if (homeViewModel.currentSiteUiState.value != null){
+            getRooms()
+        }
     }
 
     override fun onChangeRoom() {

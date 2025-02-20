@@ -48,7 +48,7 @@ class SensorsViewModel(
     var dataSensorUiState: DataSensorUiState by mutableStateOf(DataSensorUiState.Loading)
         private set
 
-    fun restarti() {
+    fun fresh() {
         getAllSensor()
     }
 

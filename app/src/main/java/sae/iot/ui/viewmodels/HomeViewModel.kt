@@ -1,5 +1,6 @@
 package sae.iot.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -50,13 +51,13 @@ class HomeViewModel : ViewModel() {
 
     fun setCurrentSite(navigationController: NavHostController, site: Site?) {
         if (site != null) {
+
             navigationController.navigate(IOTScreen.Room.name)
         } else {
             navigationController.navigate(IOTScreen.Main.name)
         }
 
         _currentSiteUiState.value = site
-
     }
 
     fun setSelectedIndex(navigationController: NavHostController, index: Int) {
