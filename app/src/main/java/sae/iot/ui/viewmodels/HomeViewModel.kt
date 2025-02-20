@@ -7,13 +7,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import sae.iot.IotApplication
 import sae.iot.R
 import sae.iot.ui.IOTScreen
 
-enum class Build {
+enum class Site {
     TETRAS,
     IUT;
 
@@ -21,6 +22,13 @@ enum class Build {
         return when (this) {
             TETRAS -> "Tetras"
             IUT -> "IUT Annecy"
+        }
+    }
+
+    fun slug(): String {
+        return when (this) {
+            TETRAS -> "tetras"
+            IUT -> "iut"
         }
     }
 

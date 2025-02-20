@@ -54,6 +54,7 @@ import sae.iot.ui.viewmodels.SensorsViewModel
 fun SensorScreen(
     homeViewModel: HomeViewModel,
     navController: NavHostController,
+    sensorsViewModel: SensorsViewModel,
     modifier: Modifier = Modifier
 ) {
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
