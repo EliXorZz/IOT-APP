@@ -1,32 +1,23 @@
 package sae.iot.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import sae.iot.model.DataSensor
 import sae.iot.model.Room
+import sae.iot.ui.components.CurrentChart
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
@@ -46,10 +37,7 @@ import sae.iot.ui.viewmodels.OccupancyUiState
 import sae.iot.ui.viewmodels.RoomUiState
 import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.SensorUiState
-import androidx.compose.material3.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import sae.iot.ui.viewmodels.ViewType
 
 @Composable
 fun RoomScreen(
@@ -62,13 +50,14 @@ fun RoomScreen(
 
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
     val roomSelected by sensorRoomViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
-    val alertOccupied by sensorRoomViewModel.alertOccupiedUiState.collectAsStateWithLifecycle()
+    val viewType by homeViewModel.viewTypeUiState.collectAsStateWithLifecycle()
 
     val roomUiState = sensorRoomViewModel.roomUiState
     val occupancyUiState = sensorRoomViewModel.occupancyUiState
     val sensorUiState = sensorRoomViewModel.sensorsUiState
 
     var sensorsDataLoading: Boolean = false
+    var occupancyLoading: Boolean = false
 
     var rooms = listOf<Room>()
     when (roomUiState) {
@@ -86,7 +75,10 @@ fun RoomScreen(
         is OccupancyUiState.Success -> {
             roomOccupied = occupancyUiState.occupied
         }
-        is OccupancyUiState.Error -> {}
+
+        is OccupancyUiState.Error -> {
+            occupancyLoading = true
+        }
     }
 
     var sensors: Map<String, DataSensor> = emptyMap()
@@ -129,30 +121,27 @@ fun RoomScreen(
                 modifier = Modifier.weight(1f)
             )
 
-            RefreshButton(sensorRoomViewModel)
+            Row(
+                modifier = Modifier.padding(start = 15.dp)
+            ) {
+                SwitchViewButton(homeViewModel, viewType)
+                RefreshButton(sensorRoomViewModel)
+            }
         }
 
-        AnimatedVisibility(
-            visible = roomOccupied && alertOccupied,
-            enter = expandVertically(
-                expandFrom = Alignment.Top
-            ) + fadeIn(),
-            exit = shrinkVertically(
-                shrinkTowards = Alignment.Top
-            ) + fadeOut()
-        ) {
-            OccupiedAlert(
-                onDismiss = { sensorRoomViewModel.setAlertClose() }
-            )
-        }
+        if (!occupancyLoading) Text(roomOccupied.toString())
 
-        if (sensorsDataLoading) LoadingSpin() else ChartColumn(sensors)
+        if (sensorsDataLoading) LoadingSpin() else ChartColumn(
+            sensors = sensors,
+            type = viewType
+        )
     }
 }
 
 @Composable
 private fun ChartColumn(
     sensors: Map<String, DataSensor>,
+    type: ViewType,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -163,14 +152,43 @@ private fun ChartColumn(
             .padding(vertical = 20.dp)
     ) {
         sensors.forEach { (key, sensor) ->
-            LineChart(
-                title = key,
+            if (type == ViewType.CURRENT) {
+                CurrentChart(
+                    title = key,
 
-                measurement = sensor.measurement,
-                listY = sensor.y,
-                listX = sensor.x
-            )
+                    measurement = sensor.measurement,
+                    listY = sensor.y,
+                )
+            }
+
+            if (type == ViewType.CHART) {
+                LineChart(
+                    title = key,
+
+                    measurement = sensor.measurement,
+                    listY = sensor.y,
+                    listX = sensor.x
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun SwitchViewButton(
+    homeViewModel: HomeViewModel,
+    type: ViewType,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = { homeViewModel.switchViewType() },
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (type == ViewType.CURRENT) Icons.Default.BarChart else Icons.Default.Numbers,
+            contentDescription = "Switch type",
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -181,66 +199,13 @@ private fun RefreshButton(
 ) {
     IconButton(
         onClick = { homeViewModel.refresh() },
-        modifier = modifier.padding(start = 8.dp)
+        modifier = modifier
     ) {
         Icon(
             imageVector = Icons.Default.Refresh,
             contentDescription = "Rafraîchir",
             tint = MaterialTheme.colorScheme.primary
         )
-    }
-}
-
-@Composable
-private fun OccupiedAlert(
-    onDismiss: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Info,
-                    contentDescription = "Information",
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-                Text(
-                    text = "Salle occupée",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier.size(24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Dismiss alert",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-        }
     }
 }
 
