@@ -39,8 +39,12 @@ class HomeViewModel : ViewModel() {
     private val _selectedIndexUiState = MutableStateFlow(0)
     val selectedIndexUiState = _selectedIndexUiState.asStateFlow()
 
-    fun setCurrentBuild(navigationController: NavHostController, build: Build) {
-        navigationController.navigate(IOTScreen.Room.name)
+    fun setCurrentBuild(navigationController: NavHostController, build: Build?) {
+        if (build != null) {
+            navigationController.navigate(IOTScreen.Room.name)
+        } else {
+            navigationController.navigate(IOTScreen.Main.name)
+        }
 
         _currentBuildUiState.update {
             build
