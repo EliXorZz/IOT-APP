@@ -1,44 +1,54 @@
 package sae.iot.ui.screens
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import sae.iot.model.DataSensor
-import sae.iot.model.Room
 import sae.iot.model.Sensor
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.viewmodels.HomeViewModel
 import sae.iot.ui.components.LineChart
-import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.components.SensorSelector
 import sae.iot.ui.viewmodels.AllSensorUiState
 import sae.iot.ui.viewmodels.DataSensorUiState
-import sae.iot.ui.viewmodels.RoomUiState
-import sae.iot.ui.viewmodels.SensorRoomViewModel
-import sae.iot.ui.viewmodels.SensorUiState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import sae.iot.ui.viewmodels.SensorsViewModel
+
 
 @Composable
 fun SensorScreen(
@@ -117,24 +127,96 @@ fun SensorScreen(
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 private fun ChartColumn(
     title: String,
     sensor: DataSensor,
     modifier: Modifier = Modifier
 ) {
+    var alertOpen by remember { mutableStateOf(true) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp),
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .padding(vertical = 20.dp)
     ) {
+        AnimatedVisibility(
+            visible = sensor.discomfort.status && alertOpen,
+            enter = expandVertically(
+                expandFrom = Alignment.Top
+            ) + fadeIn(),
+            exit = shrinkVertically(
+                shrinkTowards = Alignment.Top
+            ) + fadeOut()
+        ) {
+            DiscomfortAlert(
+                message = sensor.discomfort.causes ?: "",
+                onDismiss = { alertOpen = false }
+            )
+        }
+
         LineChart(
             title = title,
             measurement = sensor.measurement,
             listY = sensor.y,
             listX = sensor.x
         )
+    }
+}
+
+@Composable
+private fun DiscomfortAlert(
+    message: String,
+    onDismiss: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Warning,
+                    contentDescription = "Warning icon",
+                    tint = MaterialTheme.colorScheme.error
+                )
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
+
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = "Dismiss alert",
+                    tint = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
+        }
     }
 }
 
