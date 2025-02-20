@@ -24,12 +24,14 @@ import sae.iot.R
 import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
 import sae.iot.ui.screens.ActuatorScreen
+import sae.iot.ui.screens.MainScreen
 import sae.iot.ui.screens.RoomScreen
 import sae.iot.ui.screens.SensorScreen
 import sae.iot.ui.screens.SettingScreen
 import sae.iot.ui.viewmodels.HomeViewModel
 
 enum class IOTScreen {
+    Main,
     Actions,
     Settings,
     Room,
@@ -69,6 +71,7 @@ fun IOTApp(
         viewModel(factory = HomeViewModel.Factory)
 
     val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
+    val currentBuild by homeViewModel.currentBuildUiState.collectAsStateWithLifecycle()
 
     Surface(
         modifier = Modifier
@@ -76,24 +79,34 @@ fun IOTApp(
     ) {
         Scaffold(
             topBar = {
-                TopBar(
-                    from = "IUT Annecy",
-                    alert = "Il fait trop chaud",
-                    modifier = Modifier.padding(horizontal = 15.dp)
-                )
+                if (currentBuild != null) {
+                    TopBar(
+                        alert = "Il fait trop chaud",
+                        build = currentBuild!!,
+                        modifier = Modifier.padding(horizontal = 15.dp)
+                    )
+                }
             },
 
-            bottomBar = { BottomBar(items, navController) },
+            bottomBar = {
+                if (currentBuild != null) {
+                    BottomBar(items, navController)
+                }
+            },
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = IOTScreen.Room.name,
+                startDestination = IOTScreen.Main.name,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp)
                     .padding(innerPadding)
                     .padding(top = 5.dp)
             ) {
+                composable(route = IOTScreen.Main.name) {
+                    MainScreen(homeViewModel, navController)
+                }
+
                 composable(route = IOTScreen.Actions.name) {
                     ActuatorScreen()
                 }

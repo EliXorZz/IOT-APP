@@ -17,12 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import sae.iot.R
+import sae.iot.ui.viewmodels.Build
 
 @Composable
 fun TopBar(
-    from: String,
     alert: String? = null,
-    modifier: Modifier = Modifier
+    build: Build,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Row(
@@ -32,7 +33,7 @@ fun TopBar(
                 .padding(vertical = 20.dp)
         ) {
             Image(
-                painter = painterResource(R.drawable.iut_logo),
+                painter = painterResource(build.logo()),
                 contentDescription = "logo",
 
                 modifier = Modifier.size(55.dp)
@@ -44,7 +45,7 @@ fun TopBar(
             ) {
                 Text(LocalContext.current.getString(R.string.welcome))
                 Text(
-                    text = from,
+                    text = build.realName(),
                     fontSize = 19.sp,
                     fontWeight = FontWeight.W700
                 )
