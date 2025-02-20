@@ -23,15 +23,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import sae.iot.model.DataSensor
 import sae.iot.model.Room
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.viewmodels.HomeViewModel
+import sae.iot.ui.viewmodels.OccupancyUiState
 import sae.iot.ui.viewmodels.RoomUiState
 import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.SensorUiState
+import androidx.compose.material3.Text
 
 @Composable
 fun RoomScreen(
@@ -46,9 +49,11 @@ fun RoomScreen(
     val roomSelected by sensorRoomViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
 
     val roomUiState = sensorRoomViewModel.roomUiState
+    val occupancyUiState = sensorRoomViewModel.occupancyUiState
     val sensorUiState = sensorRoomViewModel.sensorsUiState
 
-    var isLoading: Boolean = false
+    var sensorsDataLoading: Boolean = false
+    var occupancyLoading: Boolean = false
 
     var rooms = listOf<Room>()
     when (roomUiState) {
@@ -60,19 +65,33 @@ fun RoomScreen(
         is RoomUiState.Error -> {}
     }
 
+    var roomOccupied = false
+    when (occupancyUiState) {
+        is OccupancyUiState.Loading -> {
+            occupancyLoading= true
+        }
+        is OccupancyUiState.Success -> {
+            roomOccupied = occupancyUiState.occupied
+        }
+
+        is OccupancyUiState.Error -> {
+            occupancyLoading = true
+        }
+    }
+
     var sensors: Map<String, DataSensor> = emptyMap()
     when (sensorUiState) {
         is SensorUiState.Loading -> {
-            isLoading = true
+            sensorsDataLoading = true
         }
 
         is SensorUiState.Success -> {
-            isLoading = false
+            sensorsDataLoading = false
             sensors = sensorUiState.sensors
         }
 
         is SensorUiState.Error -> {
-            isLoading = true
+            sensorsDataLoading = true
         }
     }
 
@@ -103,7 +122,9 @@ fun RoomScreen(
             RefreshButton(sensorRoomViewModel)
         }
 
-        if (isLoading) LoadingSpin() else ChartColumn(sensors)
+        if (!occupancyLoading) Text(roomOccupied.toString())
+
+        if (sensorsDataLoading) LoadingSpin() else ChartColumn(sensors)
     }
 }
 
@@ -137,7 +158,7 @@ private fun RefreshButton(
     modifier: Modifier = Modifier
 ) {
     IconButton(
-        onClick = { homeViewModel.getSensors() },
+        onClick = { homeViewModel.refresh() },
         modifier = modifier.padding(start = 8.dp)
     ) {
         Icon(

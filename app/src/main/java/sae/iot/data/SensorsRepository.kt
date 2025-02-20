@@ -10,7 +10,6 @@ interface SensorsRepository {
     suspend fun getSensorsByRoom(room: String): List<String>
     suspend fun getDataSensorsByRoom(room: String): Map<String, DataSensor>
     suspend fun getDataSensor(sensorId: String): DataSensor
-    suspend fun getOccupancy(room: String): Boolean
 }
 
 class NetworkSensorsRepository(
@@ -20,5 +19,4 @@ class NetworkSensorsRepository(
     override suspend fun getSensorsByRoom(room: String): List<String> = SensorApiService.getSensorsByRoom(room)
     override suspend fun getDataSensorsByRoom(room: String): Map<String, DataSensor> = SensorApiService.getDataSensorsByRoom(room)
     override suspend fun getDataSensor(sensorId: String): DataSensor = SensorApiService.getData(sensorId)
-    override suspend fun getOccupancy(room: String): Boolean = SensorApiService.getOccupancy(room)
 }

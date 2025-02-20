@@ -63,6 +63,11 @@ class SensorRoomViewModel(
         }
     }
 
+    fun refresh() {
+        getSensors()
+        getOccupancy()
+    }
+
     override fun onChangeRoom() {
         getSensors()
     }

@@ -15,22 +15,32 @@ import sae.iot.data.RoomsRepository
 import sae.iot.model.Room
 import java.io.IOException
 
-val DEFAULT_ROOM = null
-
 sealed interface RoomUiState {
     data class Success(val rooms: List<Room>) : RoomUiState
     object Error : RoomUiState
     object Loading : RoomUiState
 }
 
+sealed interface OccupancyUiState {
+    data class Success(val occupied: Boolean) : OccupancyUiState
+    object Error : OccupancyUiState
+    object Loading : OccupancyUiState
+}
+
 abstract class RoomViewModel(
     private val roomsRepository: RoomsRepository
 ) : ViewModel() {
 
-    private val _roomSelectedUiState: MutableStateFlow<String?> = MutableStateFlow(DEFAULT_ROOM)
+    private val _roomSelectedUiState: MutableStateFlow<String?> = MutableStateFlow(null)
     val roomSelectedUiState = _roomSelectedUiState.asStateFlow()
 
+    private val _roomOccupiedUiState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val roomOccupiedUiState = _roomOccupiedUiState.asStateFlow()
+
     var roomUiState: RoomUiState by mutableStateOf(RoomUiState.Loading)
+        private set
+
+    var occupancyUiState: OccupancyUiState by mutableStateOf(OccupancyUiState.Loading)
         private set
 
     init {
@@ -42,6 +52,7 @@ abstract class RoomViewModel(
             room
         }
         onChangeRoom()
+        getOccupancy()
     }
 
     fun getRooms() {
@@ -59,6 +70,24 @@ abstract class RoomViewModel(
             } catch (e: HttpException) {
                 Log.e("HttpException", e.toString(), e)
                 RoomUiState.Error
+            }
+        }
+    }
+
+    fun getOccupancy() {
+        viewModelScope.launch {
+            occupancyUiState = OccupancyUiState.Loading
+            occupancyUiState = try {
+                val isOccupied = roomsRepository.getOccupancy(roomSelectedUiState.value!!)
+                OccupancyUiState.Success(
+                    occupied = isOccupied
+                )
+            } catch (e: IOException) {
+                Log.e("IOException", e.toString(), e)
+                OccupancyUiState.Error
+            } catch (e: HttpException) {
+                Log.e("HttpException", e.toString(), e)
+                OccupancyUiState.Error
             }
         }
     }

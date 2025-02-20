@@ -24,10 +24,6 @@ interface SensorApiService {
     @GET("api/room/{room}/sensors")
     suspend fun getDataSensorsByRoom(@Path("room") room: String): Map<String, DataSensor>
 
-    @GET("api/room/{room}/occupancy")
-    suspend fun getOccupancy(@Path("room") room: String): Boolean
-
-
 }
 
 val json = Json {
