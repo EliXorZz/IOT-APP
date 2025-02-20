@@ -81,6 +81,9 @@ fun IOTApp(
             topBar = {
                 if (currentBuild != null) {
                     TopBar(
+                        null,
+                        homeViewModel,
+                        navController,
                         build = currentBuild!!,
                         modifier = Modifier.padding(horizontal = 15.dp)
                     )
