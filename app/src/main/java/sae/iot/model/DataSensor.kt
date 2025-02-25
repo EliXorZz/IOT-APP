@@ -19,19 +19,6 @@ data class DataSensor(
             "X and Y lists must have the same size"
         }
     }
-
-    fun sensorNameFormated() : String {
-        return when(this.measurement) {
-            "°C" -> "Température"
-            "ppm" -> "Niveau de CO2"
-            "%" -> "Humidité"
-            "lx" -> "Luminosité"
-            "UV index" -> "Niveau UV"
-            "dbA" -> "Niveau sonore"
-            "binary_sensor" -> "Détecteur de mouvement"
-            else -> "Error"
-        }
-    }
 }
 
 @Serializable

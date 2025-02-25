@@ -129,6 +129,7 @@ fun SensorScreen(
         }
 
         if (isLoading) LoadingSpin() else ChartSensor(
+            sensorId = sensorSelected!!,
             sensor = sensorShow!!,
             type = viewType
         )
@@ -138,11 +139,27 @@ fun SensorScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 private fun ChartSensor(
+    sensorId: String,
     sensor: DataSensor,
     type: ViewType,
-    modifier: Modifier = Modifier
 ) {
     var alertOpen by remember { mutableStateOf(true) }
+
+    val typeSensor = sensorId.split("_")[1]
+
+    val label: String = when(typeSensor) {
+        "air" -> "Température"
+        "dew" -> "Point de rosée"
+        "co2" -> "Niveau de CO2"
+        "humidity" -> "Humidité"
+        "illuminance" -> "Luminosité"
+        "ultraviolet" -> "Niveau UV"
+        "smoke" -> "Densité de fumée"
+        "loudness" -> "Niveau sonore"
+        "volatile" -> "COV (Composés Organiques Volatils)"
+        "binary" -> "Détecteur de mouvement"
+        else -> "Error"
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -165,15 +182,17 @@ private fun ChartSensor(
             )
         }
 
+
+
         if (type == ViewType.CURRENT) {
             CurrentChart(
-                title = sensor.sensorNameFormated(),
+                title = label,
                 measurement = sensor.measurement,
                 listY = sensor.y,
             )
         } else {
             LineChart(
-                title = sensor.sensorNameFormated(),
+                title = label,
                 measurement = sensor.measurement,
                 listY = sensor.y,
                 listX = sensor.x

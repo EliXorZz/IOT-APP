@@ -34,7 +34,7 @@ class NetworkSensorsRepository(
                     "smoke_density" -> "Densité de fumée"
                     "ultraviolet" -> "Niveau UV"
                     "volatile_organic_compound_level" -> "COV (Composés Organiques Volatils)"
-                    else -> "ça marche pas"
+                    else -> "Error"
                 }
                 newKey to sensor
             }.toMap()
