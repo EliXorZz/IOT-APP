@@ -1,5 +1,6 @@
 package sae.iot.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import sae.iot.model.Room
 import sae.iot.ui.viewmodels.ActuatorViewModel
 import sae.iot.ui.viewmodels.RoomUiState
@@ -58,7 +58,7 @@ fun ActuatorScreen(
     }
 
     val roomsWithLight = listOf("d360", "DTEST")
-
+    Log.v(rooms.toString(), "")
     Column {
         Column(
             verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -66,6 +66,7 @@ fun ActuatorScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(vertical = 20.dp)
         ) {
+
             rooms.forEach { room ->
                 // Afficher uniquement les salles qui ont un bouton pour la lumière
                 if (room.name in roomsWithLight) {

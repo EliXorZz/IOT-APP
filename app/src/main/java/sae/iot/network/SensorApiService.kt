@@ -26,9 +26,3 @@ interface SensorApiService {
     suspend fun getDataSensorsByRoom(@Path("room") room: String, @Query("location") location: String = "iut"): Map<String, DataSensor>
 
 }
-
-val json = Json {
-    ignoreUnknownKeys = true
-    prettyPrint = true
-    isLenient = true
-}

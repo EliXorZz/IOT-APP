@@ -1,6 +1,5 @@
 package sae.iot.network
 
-import kotlinx.serialization.json.Json
 import sae.iot.model.Room
 import retrofit2.http.GET
 import retrofit2.http.Path
