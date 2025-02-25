@@ -19,15 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +37,7 @@ import androidx.navigation.NavHostController
 import sae.iot.model.DataSensor
 import sae.iot.model.Sensor
 import sae.iot.ui.components.CurrentChart
+import sae.iot.ui.components.DiscomfortAlert
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.SensorSelector
@@ -51,7 +47,6 @@ import sae.iot.ui.viewmodels.DataSensorUiState
 import sae.iot.ui.viewmodels.HomeViewModel
 import sae.iot.ui.viewmodels.SensorsViewModel
 import sae.iot.ui.viewmodels.ViewType
-
 
 @Composable
 fun SensorScreen(
@@ -83,12 +78,10 @@ fun SensorScreen(
         is DataSensorUiState.Loading -> {
             isLoading = true
         }
-
         is DataSensorUiState.Success -> {
             isLoading = false
             sensorShow = dataSensorUiState.sensor
         }
-
         is DataSensorUiState.Error -> {
             isLoading = true
         }
@@ -143,8 +136,6 @@ private fun ChartSensor(
     sensor: DataSensor,
     type: ViewType,
 ) {
-    var alertOpen by remember { mutableStateOf(true) }
-
     val typeSensor = sensorId.split("_")[1]
 
     val label: String = when(typeSensor) {
@@ -167,90 +158,21 @@ private fun ChartSensor(
             .verticalScroll(rememberScrollState())
             .padding(vertical = 20.dp)
     ) {
-        AnimatedVisibility(
-            visible = sensor.discomfort.status && alertOpen,
-            enter = expandVertically(
-                expandFrom = Alignment.Top
-            ) + fadeIn(),
-            exit = shrinkVertically(
-                shrinkTowards = Alignment.Top
-            ) + fadeOut()
-        ) {
-            DiscomfortAlert(
-                message = sensor.discomfort.causes ?: "",
-                onDismiss = { alertOpen = false }
-            )
-        }
-
-
-
         if (type == ViewType.CURRENT) {
             CurrentChart(
                 title = label,
                 measurement = sensor.measurement,
                 listY = sensor.y,
+                discomfort = sensor.discomfort
             )
         } else {
             LineChart(
                 title = label,
                 measurement = sensor.measurement,
                 listY = sensor.y,
-                listX = sensor.x
+                listX = sensor.x,
+                discomfort = sensor.discomfort
             )
-        }
-    }
-}
-
-@Composable
-private fun DiscomfortAlert(
-    message: String,
-    onDismiss: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Warning,
-                    contentDescription = "Warning icon",
-                    tint = MaterialTheme.colorScheme.error
-                )
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
-
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier.size(24.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Dismiss alert",
-                    tint = MaterialTheme.colorScheme.onErrorContainer
-                )
-            }
         }
     }
 }

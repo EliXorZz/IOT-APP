@@ -1,5 +1,10 @@
 package sae.iot.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,10 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
@@ -33,6 +43,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
+import sae.iot.model.Discomfort
 
 @Composable
 fun LineChart(
@@ -40,9 +51,27 @@ fun LineChart(
     measurement: String,
     listX: List<Double>,
     listY: List<Double>,
+    discomfort: Discomfort,
     modifier: Modifier = Modifier
 ) {
+    var alertOpen by remember { mutableStateOf(true) }
     val modelProducer = remember { CartesianChartModelProducer() }
+
+    AnimatedVisibility(
+        visible = discomfort.status && alertOpen,
+        enter = expandVertically(
+            expandFrom = Alignment.Top
+        ) + fadeIn(),
+        exit = shrinkVertically(
+            shrinkTowards = Alignment.Top
+        ) + fadeOut()
+    ) {
+        DiscomfortAlert(
+            message = discomfort.causes ?: "",
+            onDismiss = { alertOpen = false }
+        )
+    }
+
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
             columnSeries { series(listX) }
@@ -107,5 +136,17 @@ private fun Chart(
         ),
         modelProducer = producer,
         modifier = modifier,
+    )
+}
+
+@Preview
+@Composable
+fun LineChartPreview() {
+    LineChart(
+        title = "Température",
+        measurement = "température",
+        listX = listOf(12.0),
+        listY = listOf(12.0),
+        discomfort = Discomfort("", false)
     )
 }

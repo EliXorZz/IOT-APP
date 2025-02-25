@@ -232,6 +232,7 @@ private fun ChartColumn(
                     title = key,
                     measurement = sensor.measurement,
                     listY = sensor.y,
+                    discomfort = sensor.discomfort
                 )
             }
 
@@ -241,7 +242,8 @@ private fun ChartColumn(
 
                     measurement = sensor.measurement,
                     listY = sensor.y,
-                    listX = sensor.x
+                    listX = sensor.x,
+                    discomfort = sensor.discomfort
                 )
             }
         }
