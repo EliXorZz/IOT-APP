@@ -4,5 +4,5 @@
     <string name="actuator">Actionneur</string>
     <string name="settings">Paramètres</string>
     <string name="alertDefault">Une alerte par défaut</string>
-    <string name="welcome">Bienvenue</string>
+    <string name="welcome">Bienvenue à</string>
 </resources>

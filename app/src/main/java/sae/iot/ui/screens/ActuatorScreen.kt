@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import sae.iot.model.Room
+import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.viewmodels.ActuatorViewModel
 import sae.iot.ui.viewmodels.RoomUiState
 
@@ -39,8 +40,6 @@ fun ActuatorScreen(
     modifier: Modifier = Modifier
 ) {
     val actuatorRoomUiState = actuatorViewModel.roomUiState
-
-    val roomSelected by actuatorViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
 
     var rooms = listOf<Room>()
     when (actuatorRoomUiState) {
@@ -57,8 +56,6 @@ fun ActuatorScreen(
         }
     }
 
-    val roomsWithLight = listOf("d360")
-
     LaunchedEffect(Unit) {
         actuatorViewModel.getRooms()
     }
@@ -72,59 +69,56 @@ fun ActuatorScreen(
         ) {
 
             rooms.forEach { room ->
-                // Afficher uniquement les salles qui ont un bouton pour la lumière
-                if (room.name in roomsWithLight) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Text(
-                            text = room.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(bottom = 10.dp)
-                        )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = room.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(bottom = 10.dp)
+                    )
 
-                        val isLightOn = remember { mutableStateOf(false) }
-                        val buttonShape = RoundedCornerShape(50.dp)
+                    val isLightOn = remember { mutableStateOf(false) }
+                    val buttonShape = RoundedCornerShape(50.dp)
 
-                        // Bouton avec icône et changement de fond
-                        Button(
-                            onClick = { isLightOn.value = !isLightOn.value },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isLightOn.value) Color(0xFFFFFFFF) else Color(
-                                    0xFF37474F
-                                ),
-                                contentColor = if (isLightOn.value) Color.Black else Color.White
+                    // Bouton avec icône et changement de fond
+                    Button(
+                        onClick = { isLightOn.value = !isLightOn.value },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isLightOn.value) Color(0xFFFFFFFF) else Color(
+                                0xFF37474F
                             ),
-                            shape = buttonShape,
-                            modifier = Modifier
-                                .height(100.dp)
-                                .fillMaxWidth()
-                                .then(
-                                    if (isLightOn.value) {
-                                        Modifier.border(
-                                            width = 2.dp, // Épaisseur de la bordure
-                                            color = Color(0xFF37474F), // Couleur de la bordure
-                                            shape = buttonShape // Forme de la bordure
-                                        )
-                                    } else {
-                                        Modifier // Pas de bordure si la lumière est éteinte
-                                    }
-                                )
-                        ) {
-                            Icon(
-                                imageVector = if (isLightOn.value) Icons.Default.WbSunny else Icons.Default.NightsStay,
-                                contentDescription = if (isLightOn.value) "Lumière ON" else "Lumière OFF",
-                                modifier = Modifier.size(50.dp)
+                            contentColor = if (isLightOn.value) Color.Black else Color.White
+                        ),
+                        shape = buttonShape,
+                        modifier = Modifier
+                            .height(100.dp)
+                            .fillMaxWidth()
+                            .then(
+                                if (isLightOn.value) {
+                                    Modifier.border(
+                                        width = 2.dp, // Épaisseur de la bordure
+                                        color = Color(0xFF37474F), // Couleur de la bordure
+                                        shape = buttonShape // Forme de la bordure
+                                    )
+                                } else {
+                                    Modifier // Pas de bordure si la lumière est éteinte
+                                }
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = if (isLightOn.value) "Lumière ON" else "Lumière OFF",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isLightOn.value) Icons.Default.WbSunny else Icons.Default.NightsStay,
+                            contentDescription = if (isLightOn.value) "Lumière ON" else "Lumière OFF",
+                            modifier = Modifier.size(50.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = if (isLightOn.value) "Lumière ON" else "Lumière OFF",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
