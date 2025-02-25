@@ -13,8 +13,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            IOTTheme {
+            val context = LocalContext.current
+            val sharedPreferences =
+                context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+
+            val dark = sharedPreferences.getBoolean("dark_mode", false)
+
+            IOTTheme(darkDefault = dark) {
                 IOTApp()
             }
         }
