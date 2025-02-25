@@ -1,6 +1,5 @@
 package sae.iot.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,8 +57,12 @@ fun ActuatorScreen(
         }
     }
 
-    val roomsWithLight = listOf("d360", "DTEST")
-    Log.v(rooms.toString(), "")
+    val roomsWithLight = listOf("d360")
+
+    LaunchedEffect(Unit) {
+        actuatorViewModel.getRooms()
+    }
+
     Column {
         Column(
             verticalArrangement = Arrangement.spacedBy(15.dp),
