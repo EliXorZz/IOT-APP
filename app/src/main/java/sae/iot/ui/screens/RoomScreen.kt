@@ -230,7 +230,6 @@ private fun ChartColumn(
             if (type == ViewType.CURRENT) {
                 CurrentChart(
                     title = key,
-
                     measurement = sensor.measurement,
                     listY = sensor.y,
                 )

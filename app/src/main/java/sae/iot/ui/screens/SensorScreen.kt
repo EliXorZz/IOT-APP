@@ -73,9 +73,7 @@ fun SensorScreen(
         is AllSensorUiState.Loading -> {}
         is AllSensorUiState.Success -> {
             sensorMap = allSensorUiState.sensors
-
         }
-
         is AllSensorUiState.Error -> {}
     }
 
@@ -131,7 +129,6 @@ fun SensorScreen(
         }
 
         if (isLoading) LoadingSpin() else ChartSensor(
-            title = sensorSelected!!,
             sensor = sensorShow!!,
             type = viewType
         )
@@ -141,7 +138,6 @@ fun SensorScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 private fun ChartSensor(
-    title: String,
     sensor: DataSensor,
     type: ViewType,
     modifier: Modifier = Modifier
@@ -171,20 +167,18 @@ private fun ChartSensor(
 
         if (type == ViewType.CURRENT) {
             CurrentChart(
-                title = title,
+                title = sensor.sensorNameFormated(),
                 measurement = sensor.measurement,
                 listY = sensor.y,
             )
         } else {
             LineChart(
-                title = title,
+                title = sensor.sensorNameFormated(),
                 measurement = sensor.measurement,
                 listY = sensor.y,
                 listX = sensor.x
             )
         }
-
-
     }
 }
 
