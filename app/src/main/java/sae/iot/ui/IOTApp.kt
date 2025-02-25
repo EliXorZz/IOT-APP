@@ -111,11 +111,10 @@ fun IOTApp(
             topBar = {
                 if (currentSite != null) {
                     TopBar(
-                        null,
                         homeViewModel,
                         navController,
                         site = currentSite!!,
-                        modifier = Modifier.padding(horizontal = 15.dp)
+                        modifier = Modifier
                     )
                 }
             },
