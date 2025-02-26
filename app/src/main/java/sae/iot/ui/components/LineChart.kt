@@ -104,6 +104,7 @@ fun LineChart(
 
 @Composable
 private fun Chart(
+    color: Int = MaterialTheme.colorScheme.onSurface.toArgb(),
     producer: CartesianChartModelProducer,
     modifier: Modifier = Modifier
 ) {
@@ -128,10 +129,10 @@ private fun Chart(
                 )
             ),
             startAxis = VerticalAxis.rememberStart(
-                label = TextComponent(color = MaterialTheme.colorScheme.onSurface.toArgb())
+                label = TextComponent(color = color)
             ),
             bottomAxis = HorizontalAxis.rememberBottom(
-                label = TextComponent(color = MaterialTheme.colorScheme.onSurface.toArgb())
+                label = TextComponent(color = color)
             ),
         ),
         modelProducer = producer,

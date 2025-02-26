@@ -27,8 +27,6 @@ class SensorRoomViewModel(
     var sensorsUiState: SensorUiState by mutableStateOf(SensorUiState.Loading)
         private set
 
-    private val currentSite = homeViewModel.currentSiteUiState
-
     fun getSensors() {
         viewModelScope.launch {
             sensorsUiState = SensorUiState.Loading

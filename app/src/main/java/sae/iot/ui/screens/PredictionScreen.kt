@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -13,12 +14,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import sae.iot.model.Discomfort
 import sae.iot.model.Prediction
+import sae.iot.model.Room
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
 import sae.iot.ui.components.LoadingSpin
+import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.viewmodels.HomeViewModel
 import sae.iot.ui.viewmodels.PredictionUiState
 import sae.iot.ui.viewmodels.PredictionViewModel
+import sae.iot.ui.viewmodels.RoomUiState
 
 @Composable
 fun PredictionScreen(
@@ -27,12 +31,23 @@ fun PredictionScreen(
     predictionViewModel: PredictionViewModel,
     modifier: Modifier = Modifier
 ) {
-    val subMenuIndex by homeViewModel.selectedIndexUiState.collectAsStateWithLifecycle()
+    val roomSelected by predictionViewModel.roomSelectedUiState.collectAsStateWithLifecycle()
 
+    val roomUiState = predictionViewModel.roomUiState
     val predictionUiState = predictionViewModel.predictionUiState
 
     var prediction = Prediction( List(12) { 1.0 }, List(12) { 1.0 })
     var loading = false
+
+    var rooms = listOf<Room>()
+    when (roomUiState) {
+        is RoomUiState.Loading -> {}
+        is RoomUiState.Success -> {
+            rooms = roomUiState.rooms
+        }
+
+        is RoomUiState.Error -> {}
+    }
 
     when (predictionUiState) {
         is PredictionUiState.Loading -> {
@@ -49,6 +64,10 @@ fun PredictionScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        predictionViewModel.fresh()
+    }
+
     Column(modifier = modifier) {
         if (loading) LoadingSpin() else {
             Column(
@@ -58,6 +77,16 @@ fun PredictionScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(vertical = 20.dp)
             ) {
+                RoomSelector(
+                    changeRoomState = { room ->
+                        predictionViewModel.changeRoom(room)
+                        predictionViewModel.getPrediction()
+                    },
+                    roomSelected = roomSelected,
+                    rooms = rooms,
+                    modifier = Modifier.weight(1f)
+                )
+
                 LineChart(
                     title = "Prediction",
                     measurement = "Température",

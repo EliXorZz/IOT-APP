@@ -28,10 +28,6 @@ class PredictionViewModel(
     var predictionUiState: PredictionUiState by mutableStateOf(PredictionUiState.Loading)
         private set
 
-    init {
-        getPrediction()
-    }
-
     fun getPrediction() {
         viewModelScope.launch {
             predictionUiState = PredictionUiState.Loading
@@ -50,6 +46,16 @@ class PredictionViewModel(
                 Log.e("HttpException", e.toString(), e)
                 PredictionUiState.Error
             }
+        }
+    }
+
+    fun refresh() {
+        getPrediction()
+    }
+
+    fun fresh() {
+        if (homeViewModel.currentSiteUiState.value != null){
+            getRooms()
         }
     }
 
