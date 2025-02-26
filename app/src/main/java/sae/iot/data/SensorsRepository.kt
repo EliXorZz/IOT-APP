@@ -1,6 +1,5 @@
 package sae.iot.data
 
-import android.util.Log
 import sae.iot.model.DataSensor
 import sae.iot.model.Sensor
 import sae.iot.network.SensorApiService

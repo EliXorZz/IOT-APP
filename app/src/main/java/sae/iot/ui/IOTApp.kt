@@ -3,6 +3,7 @@ package sae.iot.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoGraph
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
@@ -40,13 +41,13 @@ enum class IOTScreen {
     Actions,
     Settings,
     Room,
-    Sensor
+    Sensor,
+    Prediction
 }
 
 data class NavigationItem(
     var title: String,
     var icon: ImageVector,
-
     var screen: IOTScreen
 )
 
@@ -60,6 +61,11 @@ fun IOTApp(
             title = LocalContext.current.getString(R.string.home),
             icon = Icons.Outlined.Home,
             screen = IOTScreen.Room
+        ),
+        NavigationItem(
+            title = LocalContext.current.getString(R.string.prediction),
+            icon = Icons.Outlined.AutoGraph,
+            IOTScreen.Prediction
         ),
         NavigationItem(
             title = LocalContext.current.getString(R.string.actuator),
@@ -137,11 +143,12 @@ fun IOTApp(
                 composable(route = IOTScreen.Main.name) {
                     MainScreen(homeViewModel, navController)
                 }
-
+                composable(route = IOTScreen.Prediction.name) {
+                    SensorScreen(homeViewModel, navController, sensorsViewModel)
+                }
                 composable(route = IOTScreen.Actions.name) {
                     ActuatorScreen(actuatorViewModel)
                 }
-
                 composable(route = IOTScreen.Settings.name) {
                     SettingScreen()
                 }

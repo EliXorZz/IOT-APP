@@ -40,6 +40,7 @@ import sae.iot.model.Room
 import sae.iot.ui.components.CurrentChart
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
+import sae.iot.ui.components.LoadingSpin
 import sae.iot.ui.components.RoomSelector
 import sae.iot.ui.components.SwitchViewButton
 import sae.iot.ui.viewmodels.HomeViewModel
@@ -47,6 +48,7 @@ import sae.iot.ui.viewmodels.OccupancyUiState
 import sae.iot.ui.viewmodels.RoomUiState
 import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.SensorUiState
+import sae.iot.ui.viewmodels.SensorsViewModel
 import sae.iot.ui.viewmodels.ViewType
 
 @Composable
@@ -263,25 +265,6 @@ private fun RefreshButton(
             imageVector = Icons.Default.Refresh,
             contentDescription = "Rafraîchir",
             tint = MaterialTheme.colorScheme.primary
-        )
-    }
-}
-
-@Composable
-private fun LoadingSpin(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.width(64.dp),
-            color = MaterialTheme.colorScheme.secondary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     }
 }

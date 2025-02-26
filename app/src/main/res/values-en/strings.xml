@@ -2,6 +2,7 @@
 <resources>
     <string name="home">Accueil</string>
     <string name="actuator">Actionneur</string>
+    <string name="prediction">Prédiction</string>
     <string name="settings">Paramètres</string>
     <string name="alertDefault">A default alert</string>
     <string name="welcome">Binevenue à</string>

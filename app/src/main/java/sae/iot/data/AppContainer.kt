@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import sae.iot.network.PredictionApiService
 import sae.iot.network.RoomApiService
 import sae.iot.network.SensorApiService
 
@@ -13,6 +14,7 @@ import sae.iot.network.SensorApiService
 interface AppContainer {
     val RoomsRepository: RoomsRepository
     val SensorsRepository: SensorsRepository
+    val PredictionRepository: PredictionRepository
 }
 
 /**
@@ -39,20 +41,26 @@ class DefaultAppContainer : AppContainer {
     /**
      * Retrofit service object for creating api calls
      */
-    private val retrofitService: RoomApiService by lazy {
+    private val retrofitRoomService: RoomApiService by lazy {
         retrofit.create(RoomApiService::class.java)
     }
-    private val retrofitServiceMetric: SensorApiService by lazy {
+    private val retrofitSensorService: SensorApiService by lazy {
         retrofit.create(SensorApiService::class.java)
+    }
+    private val retrofitPredictionService: PredictionApiService by lazy {
+        retrofit.create(PredictionApiService::class.java)
     }
 
     /**
      * DI implementation for repository
      */
     override val RoomsRepository: RoomsRepository by lazy {
-        NetworkRoomsRepository(retrofitService)
+        NetworkRoomsRepository(retrofitRoomService)
     }
     override val SensorsRepository: SensorsRepository by lazy {
-        NetworkSensorsRepository(retrofitServiceMetric)
+        NetworkSensorsRepository(retrofitSensorService)
+    }
+    override val PredictionRepository: PredictionRepository by lazy {
+        NetworkPredictionRepository(retrofitPredictionService)
     }
 }

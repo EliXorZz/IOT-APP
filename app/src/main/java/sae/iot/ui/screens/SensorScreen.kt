@@ -40,6 +40,7 @@ import sae.iot.ui.components.CurrentChart
 import sae.iot.ui.components.DiscomfortAlert
 import sae.iot.ui.components.HomeNavigation
 import sae.iot.ui.components.LineChart
+import sae.iot.ui.components.LoadingSpin
 import sae.iot.ui.components.SensorSelector
 import sae.iot.ui.components.SwitchViewButton
 import sae.iot.ui.viewmodels.AllSensorUiState
@@ -190,24 +191,6 @@ private fun RefreshButton(
             imageVector = Icons.Default.Refresh,
             contentDescription = "Rafraîchir",
             tint = MaterialTheme.colorScheme.primary
-        )
-    }
-}
-
-
-@Composable
-private fun LoadingSpin(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.width(64.dp),
-            color = MaterialTheme.colorScheme.secondary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
     }
 }
