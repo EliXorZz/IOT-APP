@@ -1,5 +1,6 @@
 package sae.iot.ui.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -33,8 +34,10 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
@@ -44,6 +47,9 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import sae.iot.model.Discomfort
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun LineChart(
@@ -52,6 +58,7 @@ fun LineChart(
     listX: List<Double>,
     listY: List<Double>,
     discomfort: Discomfort,
+    color: Color = Color(0xffa485e0),
     modifier: Modifier = Modifier
 ) {
     var alertOpen by remember { mutableStateOf(true) }
@@ -96,7 +103,7 @@ fun LineChart(
                     .padding(15.dp)
             ) {
                 Text(title + " (${measurement})")
-                Chart(modelProducer)
+                Chart(color, modelProducer, listX)
             }
         }
     }
@@ -104,40 +111,53 @@ fun LineChart(
 
 @Composable
 private fun Chart(
-    color: Int = MaterialTheme.colorScheme.onSurface.toArgb(),
+    color: Color,
     producer: CartesianChartModelProducer,
-    modifier: Modifier = Modifier
-) {
-    val lineColor = Color(0xffa485e0)
-
+    listX: List<Double>,
+    modifier: Modifier = Modifier,
+    ) {
     CartesianChartHost(
+        scrollState =  rememberVicoScrollState(
+            initialScroll = Scroll.Absolute.End
+        ),
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(
                 lineProvider =
                 LineCartesianLayer.LineProvider.series(
                     LineCartesianLayer.rememberLine(
-                        fill = LineCartesianLayer.LineFill.single(fill(lineColor)),
+                        fill = LineCartesianLayer.LineFill.single(fill(color)),
                         areaFill =
                         LineCartesianLayer.AreaFill.single(
                             fill(
                                 ShaderProvider.verticalGradient(
-                                    arrayOf(lineColor.copy(alpha = 0.4f), Color.Transparent)
+                                    arrayOf(color.copy(alpha = 0.4f), Color.Transparent)
                                 )
                             )
                         ),
                     )
                 )
             ),
-            startAxis = VerticalAxis.rememberStart(
-                label = TextComponent(color = color)
+            startAxis = VerticalAxis
+                .rememberStart(
+                label = TextComponent(color = MaterialTheme.colorScheme.onSurface.toArgb())
             ),
             bottomAxis = HorizontalAxis.rememberBottom(
-                label = TextComponent(color = color)
+                label = TextComponent(color = MaterialTheme.colorScheme.onSurface.toArgb()),
+                valueFormatter = { _, value, _ ->
+                    convertTimestampToDate(listX[value.toInt()]) + "H"
+                }
             ),
         ),
+
         modelProducer = producer,
         modifier = modifier,
     )
+}
+
+fun convertTimestampToDate(timestamp: Double): String {
+    val date = Date(timestamp.toLong() * 1000)
+    val format = SimpleDateFormat("dd-MM HH", Locale.getDefault())
+    return format.format(date)
 }
 
 @Preview

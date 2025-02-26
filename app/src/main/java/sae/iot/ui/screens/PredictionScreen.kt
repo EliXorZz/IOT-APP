@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -92,7 +94,8 @@ fun PredictionScreen(
                     measurement = "Température",
                     listY = prediction.y,
                     listX = prediction.x,
-                    discomfort = Discomfort("",false)
+                    discomfort = Discomfort("",false),
+                    color = Color(0xFFFFA500)
                 )
             }
         }
