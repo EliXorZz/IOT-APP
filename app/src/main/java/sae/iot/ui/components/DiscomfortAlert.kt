@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.ReportProblem
 import androidx.compose.material.icons.rounded.Warning
@@ -43,7 +44,7 @@ fun DiscomfortAlert(
             containerColor = Color(0xFFE1F5FE)
         }
         2 -> {
-            icon = Icons.Rounded.ReportProblem
+            icon = Icons.Rounded.ErrorOutline
             iconTint = Color(0xFFFF9800)
             textColor = Color(0xFFF57C00)
             containerColor = Color(0xFFFFF3E0)
