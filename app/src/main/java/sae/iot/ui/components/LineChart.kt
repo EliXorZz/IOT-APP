@@ -59,6 +59,7 @@ fun LineChart(
     listY: List<Double>,
     discomfort: Discomfort,
     color: Color = Color(0xffa485e0),
+    scrollStart: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var alertOpen by remember { mutableStateOf(true) }
@@ -103,7 +104,7 @@ fun LineChart(
                     .padding(15.dp)
             ) {
                 Text(title + " (${measurement})")
-                Chart(color, modelProducer, listX)
+                Chart(color, modelProducer, listX, scrollStart)
             }
         }
     }
@@ -114,11 +115,12 @@ private fun Chart(
     color: Color,
     producer: CartesianChartModelProducer,
     listX: List<Double>,
+    scrollStart: Boolean,
     modifier: Modifier = Modifier,
     ) {
     CartesianChartHost(
         scrollState =  rememberVicoScrollState(
-            initialScroll = Scroll.Absolute.End
+            initialScroll = if (scrollStart) Scroll.Absolute.Start else Scroll.Absolute.End
         ),
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(

@@ -2,6 +2,7 @@ package sae.iot.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -79,24 +80,29 @@ fun PredictionScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(vertical = 20.dp)
             ) {
-                RoomSelector(
-                    changeRoomState = { room ->
-                        predictionViewModel.changeRoom(room)
-                        predictionViewModel.getPrediction()
-                    },
-                    roomSelected = roomSelected,
-                    rooms = rooms,
-                    modifier = Modifier.weight(1f)
-                )
+                Row {
+                    RoomSelector(
+                        changeRoomState = { room ->
+                            predictionViewModel.changeRoom(room)
+                            predictionViewModel.getPrediction()
+                        },
+                        roomSelected = roomSelected,
+                        rooms = rooms,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-                LineChart(
-                    title = "Prediction",
-                    measurement = "Température",
-                    listY = prediction.y,
-                    listX = prediction.x,
-                    discomfort = Discomfort("",false),
-                    color = Color(0xFFFFA500)
-                )
+                Row {
+                    LineChart(
+                        title = "Prediction",
+                        measurement = "Température",
+                        listY = prediction.y,
+                        listX = prediction.x,
+                        discomfort = Discomfort("",false),
+                        color = Color(0xFFFFA500),
+                        scrollStart = true
+                    )
+                }
             }
         }
     }
