@@ -26,7 +26,9 @@ data class Discomfort(
     @SerialName(value = "causes")
     val causes: String?,
     @SerialName(value = "status")
-    val status: Boolean
+    val status: Boolean,
+    @SerialName(value = "intensity")
+    val intensity: Int
 )
 
 

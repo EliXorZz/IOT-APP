@@ -98,7 +98,7 @@ fun PredictionScreen(
                         measurement = "Température",
                         listY = prediction.y,
                         listX = prediction.x,
-                        discomfort = Discomfort("",false),
+                        discomfort = Discomfort("",false, 0),
                         color = Color(0xFFFFA500),
                         scrollStart = true
                     )

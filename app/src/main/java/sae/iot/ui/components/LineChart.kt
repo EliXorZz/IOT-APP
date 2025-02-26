@@ -64,7 +64,7 @@ fun LineChart(
 ) {
     var alertOpen by remember { mutableStateOf(true) }
     val modelProducer = remember { CartesianChartModelProducer() }
-
+    Log.i("",discomfort.status.toString())
     AnimatedVisibility(
         visible = discomfort.status && alertOpen,
         enter = expandVertically(
@@ -76,6 +76,7 @@ fun LineChart(
     ) {
         DiscomfortAlert(
             message = discomfort.causes ?: "",
+            intensity = discomfort.intensity,
             onDismiss = { alertOpen = false }
         )
     }
@@ -170,6 +171,6 @@ fun LineChartPreview() {
         measurement = "température",
         listX = listOf(12.0),
         listY = listOf(12.0),
-        discomfort = Discomfort("", false)
+        discomfort = Discomfort("", false, 0)
     )
 }
