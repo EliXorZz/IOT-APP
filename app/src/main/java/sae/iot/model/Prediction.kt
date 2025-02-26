@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Prediction(
-    @SerialName(value = "measurement")
-    val measurement: String,
     @SerialName(value = "x")
     val x: List<Double>,
     @SerialName(value = "y")

@@ -28,11 +28,13 @@ import sae.iot.ui.components.topbar.BottomBar
 import sae.iot.ui.components.topbar.TopBar
 import sae.iot.ui.screens.ActuatorScreen
 import sae.iot.ui.screens.MainScreen
+import sae.iot.ui.screens.PredictionScreen
 import sae.iot.ui.screens.RoomScreen
 import sae.iot.ui.screens.SensorScreen
 import sae.iot.ui.screens.SettingScreen
 import sae.iot.ui.viewmodels.ActuatorViewModel
 import sae.iot.ui.viewmodels.HomeViewModel
+import sae.iot.ui.viewmodels.PredictionViewModel
 import sae.iot.ui.viewmodels.SensorRoomViewModel
 import sae.iot.ui.viewmodels.SensorsViewModel
 
@@ -88,11 +90,19 @@ fun IOTApp(
     val context = LocalContext.current.applicationContext as IotApplication
     val roomsRepository = context.container.RoomsRepository
     val sensorsRepository = context.container.SensorsRepository
+    val predictionRepository = context.container.PredictionRepository
 
     val sensorsViewModel = remember {
         SensorsViewModel(
             homeViewModel = homeViewModel,
             sensorRepository = sensorsRepository
+        )
+    }
+    val predictionViewModel = remember {
+        PredictionViewModel(
+            homeViewModel = homeViewModel,
+            roomsRepository = roomsRepository,
+            predictionRepository = predictionRepository
         )
     }
     val sensorRoomViewModel = remember {
@@ -144,7 +154,7 @@ fun IOTApp(
                     MainScreen(homeViewModel, navController)
                 }
                 composable(route = IOTScreen.Prediction.name) {
-                    SensorScreen(homeViewModel, navController, sensorsViewModel)
+                    PredictionScreen(homeViewModel, navController, predictionViewModel)
                 }
                 composable(route = IOTScreen.Actions.name) {
                     ActuatorScreen(actuatorViewModel)

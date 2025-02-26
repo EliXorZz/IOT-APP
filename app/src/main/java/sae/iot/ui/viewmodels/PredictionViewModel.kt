@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import sae.iot.data.PredictionRepository
+import sae.iot.data.RoomsRepository
 import sae.iot.model.Prediction
 import java.io.IOException
 
@@ -18,19 +19,29 @@ sealed interface PredictionUiState {
     object Loading : PredictionUiState
 }
 
-abstract class PredictionViewModel(
+class PredictionViewModel(
+    private val homeViewModel: HomeViewModel,
+    private val roomsRepository: RoomsRepository,
     private val predictionRepository: PredictionRepository
-) : ViewModel() {
+) : RoomViewModel(homeViewModel, roomsRepository) {
 
     var predictionUiState: PredictionUiState by mutableStateOf(PredictionUiState.Loading)
         private set
+
+    init {
+        getPrediction()
+    }
 
     fun getPrediction() {
         viewModelScope.launch {
             predictionUiState = PredictionUiState.Loading
             predictionUiState = try {
+                val site = homeViewModel.currentSiteUiState.value
                 PredictionUiState.Success(
-                    prediction = predictionRepository.getPrediction()
+                    prediction = predictionRepository.getPredictionByRoom(
+                        location = site!!.slug(),
+                        room = super.roomSelectedUiState.value!!
+                    )
                 )
             } catch (e: IOException) {
                 Log.e("IOException", e.toString(), e)
@@ -40,5 +51,9 @@ abstract class PredictionViewModel(
                 PredictionUiState.Error
             }
         }
+    }
+
+    override fun onChangeRoom() {
+        getPrediction()
     }
 }
