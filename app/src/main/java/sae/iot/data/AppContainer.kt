@@ -3,6 +3,7 @@ package sae.iot.data
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import sae.iot.network.PredictionApiService
 import sae.iot.network.RoomApiService
@@ -23,7 +24,7 @@ interface AppContainer {
  * Variables are initialized lazily and the same instance is shared across the whole app.
  */
 class DefaultAppContainer : AppContainer {
-    private val baseUrl = "http://sae-api.server.dylanbatig.fr/"
+    private val baseUrl = "https://sae-api.server.dylanbattig.fr/"
 
     /**
      * Use the Retrofit builder to build a retrofit object using a kotlinx.serialization converter
