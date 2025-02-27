@@ -1,12 +1,9 @@
 package sae.iot.ui.screens
 
-import androidx.annotation.RawRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -36,9 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import sae.iot.model.Room
-import sae.iot.ui.components.RoomSelector
+import sae.iot.ui.components.LoadingSpin
 import sae.iot.ui.viewmodels.ActuatorViewModel
 import sae.iot.ui.viewmodels.RoomUiState
 
@@ -52,7 +47,7 @@ fun ActuatorScreen(
     var rooms = listOf<Room>()
     when (actuatorRoomUiState) {
         is RoomUiState.Loading -> {
-            Text("charge")
+            LoadingSpin()
         }
 
         is RoomUiState.Success -> {
@@ -60,7 +55,7 @@ fun ActuatorScreen(
         }
 
         is RoomUiState.Error -> {
-            Text("Une erreur est survenue")
+            LoadingSpin()
         }
     }
 
@@ -98,7 +93,6 @@ fun ActuatorScreen(
                     val isLightOn = remember { mutableStateOf(false) }
                     val buttonShape = RoundedCornerShape(50.dp)
 
-                    // Bouton avec icône et changement de fond
                     Button(
                         onClick = { isLightOn.value = !isLightOn.value },
                         colors = ButtonDefaults.buttonColors(
