@@ -52,7 +52,7 @@ fun SettingScreen() {
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(horizontal = 1.dp, vertical = 1.dp)
         ) {
             Text(
                 text = "Apparence",

@@ -67,17 +67,17 @@ fun IOTApp(
         NavigationItem(
             title = LocalContext.current.getString(R.string.prediction),
             icon = Icons.Outlined.AutoGraph,
-            IOTScreen.Prediction
+            screen = IOTScreen.Prediction
         ),
         NavigationItem(
             title = LocalContext.current.getString(R.string.actuator),
             icon = Icons.Outlined.PlayArrow,
-            IOTScreen.Actions
+            screen = IOTScreen.Actions
         ),
         NavigationItem(
             title = LocalContext.current.getString(R.string.settings),
             icon = Icons.Outlined.Settings,
-            IOTScreen.Settings
+            screen = IOTScreen.Settings
         )
     )
 
