@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">IOT</string>
+    <string name="app_name" translatable="false">SensorTracker</string>
     <string name="home">Home</string>prediction
     <string name="prediction">Prediction</string>
     <string name="actuator">Actuator</string>
